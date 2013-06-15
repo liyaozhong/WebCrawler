@@ -11,43 +11,42 @@ import java.util.regex.Pattern;
 public class RegexUtil {
 	
 	/**
+	 * 电影 特殊类型：[垃圾文字]中文名字
+	 */
+	private static final String regex0 = "^(\\[|【)[^\\[\\]【】]+(\\]|】)( |\\.|-)?[^\\[\\]\\.]+(\\.)?(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex0_name = "^(\\[|【)[^\\[\\]【】]+(\\]|】)( |\\.|-)?[^\\[\\]\\.]+";
+	
+	/**
 	 * 中文名和英文名共同显示,通过S01E01或S01E01E02或S01或EP01或1X01或E01或Season1或SEASON1方式表示第几集
 	 */
-
-	private static final String regex0 = "([^\\. ]*[^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+[^\\. ]*)(\\.| )(.*)(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?|((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(\\.|-| ).*(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex0_name = "([^\\. ]*[^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+[^\\. ]*)(\\.| )";
+	private static final String regex1 = "([^\\. ]*[^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+[^\\. ]*)(\\.| )(.*)(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?|((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(\\.|-| ).*(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex1_name = "([^\\. ]*[^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+[^\\. ]*)(\\.| )";
 	
 	/**
 	 * 只显示英文名,通过Season1方式表示第几集
 	 */
-	private static final String regex1 = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?)(\\.|-| |\\)).*(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex1_name = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?)";
+	private static final String regex2 = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?)(\\.|-| |\\)).*(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex2_name = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?)";
 	
 	/**
 	 * 只显示英文名,通过S01E01或S01E01E02或S01或EP01或1X01或E01方式表示第几集
 	 * 特例：aaf-ub.s01e06r，增加(R|r)?
 	 * 特例：The Guardian.S01E17-22，增加-?
 	 */
-	private static final String regex2 = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(R|r)?-?(\\.|-| |\\)).*(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex2_name = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(R|r)?-?";
+	private static final String regex3 = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(R|r)?-?(\\.|-| |\\)).*(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex3_name = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(R|r)?-?";
 		
 	/**
 	 * 通过中括号区分字段的
 	 */
-	private static final String regex3 = "(\\[([^\\[\\]]+)\\])(\\[((S|s)\\d\\d?(E|e)\\d\\d?).*\\]).*\\.(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex3_name = "(\\[([^\\[\\]]+)\\])";
+	private static final String regex4 = "(\\[([^\\[\\]]+)\\])(\\[((S|s)\\d\\d?(E|e)\\d\\d?).*\\]).*\\.(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex4_name = "(\\[([^\\[\\]]+)\\])";
 	
 	/**
 	 * 电影类，显示中文名字和英文名字,由[]连接(要求不止一个[])
 	 */
-	private static final String regex4 = "^\\[([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\. ]*)\\] *\\[(.*)(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex4_name = "^\\[([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\. ]*)\\] *\\";
-
-	/**
-	 * 电影 特殊类型：[垃圾文字]中文名字
-	 */
-	private static final String regex5 = "^\\[[^\\[\\]]+\\]( |\\.)?[^\\[\\]\\.]+(\\.)?(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex5_name = "^\\[[^\\[\\]]+\\]( |\\.)?[^\\[\\]\\.]+";
+	private static final String regex5 = "^\\[([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\. ]*)\\] *\\[(.*)(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex5_name = "^\\[([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\. ]*)\\] *\\";
 	
 	/**
 	 * 电影 特殊类型：先英文后中文 +　HR-HDTV
@@ -109,13 +108,20 @@ public class RegexUtil {
 				if(mt2.find()){
 					String str2 = mt2.group();
 					switch (i){
-					case 0 : case 6: case 7: case 8:
+					case 0:
+						int begin = str2.indexOf("]") == -1? str2.indexOf("】") : str2.indexOf("]");
+						str2 = str2.substring(begin + 1, str2.length());
+						str2 = str2.trim();
+						str2 = str2.replaceAll("\\.", "");
+						str2 = str2.replaceAll("-", "");
+						break;
+					case 1 : case 6: case 7: case 8:
 						str2 = str2.substring(0, str2.length() - 1);
 						break;
-					case 4:
+					case 5:
 						str2 = str2.substring(1, str2.indexOf("]") - 1);
 						break;
-					case 1:case 2:
+					case 2: case 3:
 						if(str2.lastIndexOf(".") == -1){
 							if(str2.lastIndexOf(" ") == -1){
 								match = true;
@@ -127,13 +133,8 @@ public class RegexUtil {
 						str2 = str2.substring(0, str2.lastIndexOf("."));
 						str2 = str2.replaceAll("\\.", " ");
 						break;
-					case 3:
+					case 4:
 						str2 = str2.substring(1, str2.length() - 1);
-						break;
-					case 5:
-						str2 = str2.substring(str2.indexOf("]") + 1, str2.length());
-						str2 = str2.trim();
-						str2 = str2.replaceAll("\\.", "");
 						break;
 					case 9 : case 10: case 11:
 						str2 = str2.substring(0, str2.length() - 2);
@@ -175,7 +176,7 @@ public class RegexUtil {
 		if(f.isDirectory()){
 			File[] list = f.listFiles();
 			
-			for(int i = 0 ;i < list.length; i ++){
+			for(int i = 213 ;i < list.length; i ++){
 				BufferedReader stdin =new BufferedReader(new InputStreamReader(System.in));
 				try {
 					stdin.read();
