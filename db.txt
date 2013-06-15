@@ -1,0 +1,3 @@
+create table movieinfo (MOVIE_NAME varchar(50) default '', HAIBAO_PATH varchar(50) default '', primary key(MOVIE_NAME));
+create table movienames (MOVIE_NAME varchar(50) default '', MOVIE_OTHER_NAME varchar(50) default '');
+create table moviedownloadlinks (MOVIE_NAME varchar(50) default '', DOWN_LOAD_LINK varchar(100) default '');
