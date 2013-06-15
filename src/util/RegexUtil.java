@@ -38,55 +38,62 @@ public class RegexUtil {
 	private static final String regex3_name = "(\\[([^\\[\\]]+)\\])";
 	
 	/**
-	 * 电影类，显示中文名字和英文名字,由[]连接
+	 * 电影类，显示中文名字和英文名字,由[]连接(要求不止一个[])
 	 */
 	private static final String regex4 = "^\\[([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\. ]*)\\] *\\[(.*)(mp4|avi|rmvb|mkv|mpg)?";
 	private static final String regex4_name = "^\\[([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\. ]*)\\] *\\";
 
 	/**
-	 * 电影类，显示中文名字和英文名字,由空格或_连接
+	 * 电影 特殊类型：[垃圾文字]中文名字
 	 */
-	private static final String regex5 = "^([^\\._ ]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\._ ]*)( |_)(.*)(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex5_name = "^([^\\._ ]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\._ ]*)( |_)";
-	
-	/**
-	 * 电影类，显示中文名字和英文名字,由.连接
-	 */
-	private static final String regex6 = "^([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.]*)\\.(.*)(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex6_name = "^([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.]*)\\.";
+	private static final String regex5 = "^\\[[^\\[\\]]+\\]( |\\.)?[^\\[\\]\\.]+(\\.)?(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex5_name = "^\\[[^\\[\\]]+\\]( |\\.)?[^\\[\\]\\.]+";
 	
 	/**
 	 * 电影 特殊类型：先英文后中文 +　HR-HDTV
 	 * Adulthood.成年之殇.双语字幕.HR-HDTV.AC3.960X518.x264-人人影视制作.avi
 	 */
-	private static final String regex7 = "^[a-zA-Z0-9\\. ]+(\\.| )([^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+\\d*)+(\\.| ).*?(HR-HDTV).*?(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex7_name = "^[a-zA-Z0-9\\. ]+(\\.| )([^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+\\d*)+(\\.| )";
+	private static final String regex6 = "^[a-zA-Z0-9\\. ]+(\\.| )([^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+\\d*)+(\\.| ).*?(HR-HDTV).*?(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex6_name = "^[a-zA-Z0-9\\. ]+(\\.| )([^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+\\d*)+(\\.| )";
+		
+	/**
+	 * 电影类，显示中文名字和英文名字,由空格或_连接
+	 */
+	private static final String regex7 = "^([^\\._ ]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\._ ]*)( |_)(.*)(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex7_name = "^([^\\._ ]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\._ ]*)( |_)";
+	
+	/**
+	 * 电影类，显示中文名字和英文名字,由.连接
+	 */
+	private static final String regex8 = "^([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.]*)\\.(.*)(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex8_name = "^([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.]*)\\.";
 	
 	/**
 	 * 匹配到第一个表示年份字段之前的部分
 	 * 包括：用空格和.进行分割
 	 */
-	private static final String regex8 = "^.*?(\\.| )\\d{4}(\\.| ).*(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex8_name = "^.*?(\\.| )\\d{4}(\\.| )";
+	private static final String regex9 = "^.*?(\\.| )\\d{4}(\\.| ).*(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex9_name = "^.*?(\\.| )\\d{4}(\\.| )";
 	
 	/**
 	 * 匹配到第一个全数字字段之前的部分
 	 * 包括：用空格和.进行分割
 	 */
-	private static final String regex9 = "^.*?(\\.| )(\\d)+(\\.| ).*(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex9_name = "^.*?(\\.| )(\\d)+(\\.| )";
+	private static final String regex10 = "^.*?(\\.| )(\\d)+(\\.| ).*(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex10_name = "^.*?(\\.| )(\\d)+(\\.| )";
 	
 	/**
 	 * 匹配到第一个00p或00P之前的部分
 	 * 包括：用空格和.进行分割
 	 */
-	private static final String regex10 = "^.*?(\\.| )(\\d)+(P|p)(\\.| |-).*(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex10_name = "^.*?(\\.| )(\\d)+(P|p)(\\.| |-)";
+	private static final String regex11 = "^.*?(\\.| )(\\d)+(P|p)(\\.| |-).*(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex11_name = "^.*?(\\.| )(\\d)+(P|p)(\\.| |-)";
 	
 	
-	private static final String[] regex = {regex0, regex1,regex2, regex3, regex4, regex5, regex6, regex7, regex8, regex9, regex10};
+	private static final String[] regex = {regex0, regex1,regex2, regex3, regex4, regex5, regex6, regex7, regex8, regex9, regex10,
+										   regex11};
 	private static final String[] regex_name = {regex0_name, regex1_name, regex2_name, regex3_name, regex4_name, regex5_name, 
-												regex6_name, regex7_name, regex8_name, regex9_name, regex10_name};
+												regex6_name, regex7_name, regex8_name, regex9_name, regex10_name, regex11_name};
 	
 	
 	public static void getMovieName(String down_load_name){
@@ -102,7 +109,7 @@ public class RegexUtil {
 				if(mt2.find()){
 					String str2 = mt2.group();
 					switch (i){
-					case 0 : case 5: case 6: case 7:
+					case 0 : case 6: case 7: case 8:
 						str2 = str2.substring(0, str2.length() - 1);
 						break;
 					case 4:
@@ -123,7 +130,12 @@ public class RegexUtil {
 					case 3:
 						str2 = str2.substring(1, str2.length() - 1);
 						break;
-					case 8 : case 9: case 10:
+					case 5:
+						str2 = str2.substring(str2.indexOf("]") + 1, str2.length());
+						str2 = str2.trim();
+						str2 = str2.replaceAll("\\.", "");
+						break;
+					case 9 : case 10: case 11:
 						str2 = str2.substring(0, str2.length() - 2);
 						if(str2.lastIndexOf(".") == -1){
 							if(str2.lastIndexOf(" ") == -1){
@@ -163,7 +175,7 @@ public class RegexUtil {
 		if(f.isDirectory()){
 			File[] list = f.listFiles();
 			
-			for(int i = 250 ;i < list.length; i ++){
+			for(int i = 0 ;i < list.length; i ++){
 				BufferedReader stdin =new BufferedReader(new InputStreamReader(System.in));
 				try {
 					stdin.read();
