@@ -101,7 +101,7 @@ public class DyttCrawler extends BaseCrawler{
 			urlconnection.addRequestProperty("User-Agent", AGENT);
 			urlconnection.setConnectTimeout(TIME_OUT);
 			InputStream is = url.openStream();
-			BufferedReader bReader = new BufferedReader(new InputStreamReader(is, "GB2312"));
+			BufferedReader bReader = new BufferedReader(new InputStreamReader(is, "GBK"));
 			String rLine = null;
 			while((rLine=bReader.readLine())!=null){
 				sb.append(rLine);
