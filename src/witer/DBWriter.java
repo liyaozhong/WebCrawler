@@ -2,7 +2,6 @@ package witer;
 import java.sql.*;
 import java.util.ArrayList;
 
-import crawl.BaseCrawler;
 
 import util.BasicUtil;
 import util.LogUtil;

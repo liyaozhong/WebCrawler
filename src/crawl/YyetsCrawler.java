@@ -1,8 +1,6 @@
 package crawl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,11 +13,9 @@ import java.util.concurrent.Executors;
 import model.Movie_Info;
 import util.BasicUtil;
 import util.LogUtil;
-import util.RegexUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
 import witer.DBWriter;

@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 import model.Movie_Info;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
