@@ -1,3 +1,21 @@
-create table movieinfo (MOVIE_NAME varchar(50) default '', HAIBAO_PATH varchar(50) default '', primary key(MOVIE_NAME));
-create table movienames (MOVIE_NAME varchar(50) default '', MOVIE_OTHER_NAME varchar(50) default '');
-create table moviedownloadlinks (MOVIE_NAME varchar(50) default '', DOWN_LOAD_LINK varchar(100) default '');
+CREATE TABLE `moviedownloadlinks` (
+	`MOVIE_NAME` VARCHAR(100) NULL DEFAULT '',
+	`DOWN_LOAD_LINK` VARCHAR(1000) NULL DEFAULT ''
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
+
+CREATE TABLE `movieinfo` (
+	`MOVIE_NAME` VARCHAR(100) NOT NULL DEFAULT '',
+	`HAIBAO_PATH` VARCHAR(200) NULL DEFAULT '',
+	PRIMARY KEY (`MOVIE_NAME`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
+
+CREATE TABLE `movienames` (
+	`MOVIE_NAME` VARCHAR(100) NULL DEFAULT '',
+	`MOVIE_OTHER_NAME` VARCHAR(300) NULL DEFAULT ''
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;

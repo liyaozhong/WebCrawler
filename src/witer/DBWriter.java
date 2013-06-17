@@ -2,16 +2,18 @@ package witer;
 import java.sql.*;
 import java.util.ArrayList;
 
+import crawl.BaseCrawler;
+
 import util.LogUtil;
 
 import model.Movie_Info;
 
 public class DBWriter {
-	public static final String driver = "com.mysql.jdbc.Driver";
-	public static final String url = "jdbc:mysql://127.0.0.1:3306/crawler";
-	public static final String root = "root";
-	public static final String password = "liyaozhong";
-	public static final String table = "MovieInfo";
+	private static final String driver = "com.mysql.jdbc.Driver";
+	private static final String url = "jdbc:mysql://127.0.0.1:3306/";
+	private static String db_name = BaseCrawler.class.getName();
+	private static final String root = "root";
+	private static final String password = "liyaozhong";
 	
 	private static void convertForMySQL(ArrayList<Movie_Info> movie_list){
 		for(int i = 0; i < movie_list.size(); i ++){
@@ -50,6 +52,10 @@ public class DBWriter {
 			}
 		}
 		return sql;
+	}
+	
+	public void setDBName(String name){
+		db_name = name;
 	}
 	
 	private Connection conn = null;
@@ -133,7 +139,7 @@ public class DBWriter {
 			e.printStackTrace();
 		}
 		try {
-			conn = DriverManager.getConnection(url, root, password);
+			conn = DriverManager.getConnection(url + db_name, root, password);
 			if(!conn.isClosed()){
 				conn.setAutoCommit(false);
 			}

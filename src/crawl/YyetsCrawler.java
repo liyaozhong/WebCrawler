@@ -43,8 +43,8 @@ public class YyetsCrawler extends BaseCrawler{
 		//文件目录初始化
 		File f = new File("image/" + movie_src);
 		f.mkdir();
-//		f = new File("regextest");
-//		f.mkdir();
+		f = new File("regextest");
+		f.mkdir();
 		//获取max page
 		if(!getMaxPage()){
 			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++get max page failed!++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -52,6 +52,7 @@ public class YyetsCrawler extends BaseCrawler{
 		}
 		ImageWriter.getInstance().setMovieSrc(movie_src);
 		ImageWriter.getInstance().start();
+		DBWriter.getInstance().setDBName(movie_src);
 		DBWriter.getInstance().start();
 		ExecutorService exe = Executors.newFixedThreadPool(THREAD_NUM);
 		CountDownLatch cdl = new CountDownLatch(THREAD_NUM);
@@ -239,13 +240,13 @@ public class YyetsCrawler extends BaseCrawler{
 				}
 				movies.add(info);
 				
-				/** regext testing**/
-//				FileWriter write = new FileWriter(new File("regextest/" + info.getMovieName() + ".txt"));
-//				for(int o = 0; o < info.getNames().size(); o ++){
-//					write.write(info.getNames().get(o) + "\r\n");
-//				}
-//				write.flush();
-//				write.close();
+				/** regex testing**/
+				FileWriter write = new FileWriter(new File("regextest/" + info.getMovieName() + ".txt"));
+				for(int o = 0; o < info.getNames().size(); o ++){
+					write.write(info.getNames().get(o) + "\r\n");
+				}
+				write.flush();
+				write.close();
 			}
 			DBWriter.getInstance().addMovieList(movies);
 			return movies.size();
