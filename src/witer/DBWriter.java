@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import crawl.BaseCrawler;
 
+import util.BasicUtil;
 import util.LogUtil;
 
 import model.Movie_Info;
@@ -11,7 +12,7 @@ import model.Movie_Info;
 public class DBWriter {
 	private static final String driver = "com.mysql.jdbc.Driver";
 	private static final String url = "jdbc:mysql://127.0.0.1:3306/";
-	private static String db_name = BaseCrawler.class.getName();
+	private static String db_name = null;
 	private static final String root = "root";
 	private static final String password = "liyaozhong";
 	
@@ -27,7 +28,10 @@ public class DBWriter {
 			Movie_Info info = movie_list.get(i);
 			String name = info.getMovieName();
 			String path = info.getHaiBaoPath();
-			sql.add("replace into movieinfo set MOVIE_NAME='"+name+"', HAIBAO_PATH='"+path+"'");
+			if(name != null && path != null){
+				path = "image/" + db_name + "/" + BasicUtil.getMD5(name.getBytes()) + ".jpg";
+				sql.add("replace into movieinfo set MOVIE_NAME='"+name+"', HAIBAO_PATH='"+path+"'");
+			}
 		}
 		return sql;
 	}

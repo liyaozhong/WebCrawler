@@ -210,27 +210,29 @@ public class DyttCrawler extends BaseCrawler{
 			case 0:
 				str = str.substring(str.indexOf("src=\"") + 5, str.length() - 1);
 				if(!movie_info.hasHaiBaoPath()){
-					movie_info.setHaiBaoPath(str.trim());
+					str = str.trim();
+					movie_info.setHaiBaoPath(str);
 				}
 				break;
 			case 1:
 				str = str.substring(6, str.length() - 6);
 				StringTokenizer st = new StringTokenizer(str, "/");
 				if(st.countTokens() == 0){
-					movie_info.setMovieName(str.trim());
-					movie_info.addName(str.trim());
+					str = str.trim();
+					movie_info.setMovieName(str);
+					movie_info.addName(str);
 				}
 				while(st.hasMoreElements()){
-					String tmp = st.nextToken();
+					String tmp = st.nextToken().trim();
 					if(!movie_info.hasName()){
-						movie_info.setMovieName(tmp.trim());
+						movie_info.setMovieName(tmp);
 					}
-					movie_info.addName(tmp.trim());
+					movie_info.addName(tmp);
 				}
 				break;
 			case 2:
-				str = str.substring(str.indexOf("\">") + 2);
-				movie_info.addDownLoadLinks(str.trim());
+				str = str.substring(str.indexOf("\">") + 2).trim();
+				movie_info.addDownLoadLinks(str);
 				break;
 			default:break;
 			}

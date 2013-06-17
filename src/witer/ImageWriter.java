@@ -180,13 +180,12 @@ public class ImageWriter {
 			        outstream.write(buffer, 0, len); 
 			    } 
 				 
-			    byte[] stream = outstream.toByteArray();
-			    File file = new File("image/" + movie_src + "/" + BasicUtil.getMD5(stream) + ".jpg");
+			    File file = new File("image/" + movie_src + "/" + BasicUtil.getMD5(movie_info.getMovieName().getBytes()) + ".jpg");
 				if(file.exists()){
 					return FILE_EXIST;
 				}
 			    FileOutputStream fileoutStream = new FileOutputStream(file);
-			    fileoutStream.write(stream); 
+			    fileoutStream.write(outstream.toByteArray()); 
 			    outstream.close(); 
 			    inputStream.close();
 			    fileoutStream.flush();
