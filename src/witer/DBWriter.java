@@ -147,27 +147,33 @@ public class DBWriter {
 				convertForMySQL(movie_list);
 				stmt = conn.createStatement();
 				ArrayList<String> sql = creatMovie_InfoSQL(movie_list);
-				for(int i = 0; i < sql.size(); i ++){
-					stmt.addBatch(sql.get(i));
+				if(sql.size() > 0){
+					for(int i = 0; i < sql.size(); i ++){
+						stmt.addBatch(sql.get(i));
+					}
+					stmt.executeBatch();
+					conn.commit();
 				}
-				stmt.executeBatch();
-				conn.commit();
 				
 				stmt = conn.createStatement();
 				sql = creatMovie_NameSQL(movie_list);
-				for(int i = 0; i < sql.size(); i ++){
-					stmt.addBatch(sql.get(i));
+				if(sql.size() > 0){
+					for(int i = 0; i < sql.size(); i ++){
+						stmt.addBatch(sql.get(i));
+					}
+					stmt.executeBatch();
+					conn.commit();
 				}
-				stmt.executeBatch();
-				conn.commit();
 				
 				stmt = conn.createStatement();
 				sql = creatMovie_DONWLOADLINKSQL(movie_list);
-				for(int i = 0; i < sql.size(); i ++){
-					stmt.addBatch(sql.get(i));
+				if(sql.size() > 0){
+					for(int i = 0; i < sql.size(); i ++){
+						stmt.addBatch(sql.get(i));
+					}
+					stmt.executeBatch();
+					conn.commit();
 				}
-				stmt.executeBatch();
-				conn.commit();
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
