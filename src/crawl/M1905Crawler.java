@@ -2,6 +2,7 @@ package crawl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +18,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import util.LogUtil;
+import witer.DBWriter;
 import witer.ImageWriter;
 
 public class M1905Crawler extends BaseCrawler{
@@ -26,6 +28,7 @@ public class M1905Crawler extends BaseCrawler{
 	private final static String ID_NEW_PAGE = "new_page";
 	private final static String ATT_SCR = "src";
 	private final static String ATT_ALT = "alt";
+	private final static String ATT_HREF = "href";
 	private final static String NO_PIC = "nopic.gif";
 	private final static int[] YEAR = {2013,2012,2011,2010,2009,2008,2007,2006,2005,2004,2003,2001,2000};
 	private static int[] LAST_PAGE = {0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -50,6 +53,8 @@ public class M1905Crawler extends BaseCrawler{
 		}
 		ImageWriter.getInstance().setMovieSrc(movie_src);
 		ImageWriter.getInstance().start();
+		DBWriter.getInstance().setDBName(movie_src);
+		DBWriter.getInstance().start();
 		ExecutorService exe = Executors.newFixedThreadPool(THREAD_NUM);
 		CountDownLatch cdl = new CountDownLatch(THREAD_NUM);
 		for(int thread_id = 1; thread_id <= THREAD_NUM; thread_id ++){
@@ -62,6 +67,7 @@ public class M1905Crawler extends BaseCrawler{
 			e.printStackTrace();
 		}
 		ImageWriter.getInstance().halt();
+		DBWriter.getInstance().halt();
 		exe.shutdown();
 	}
 	
@@ -107,21 +113,42 @@ public class M1905Crawler extends BaseCrawler{
 		try {
 			Elements inqList_childs = doc.getElementById(ID_NEW_PAGE).previousElementSibling().children();
 			doc = null;
+			ArrayList<Movie_Info> movie_list = new ArrayList<Movie_Info>();
 			for(int i= 0; i < inqList_childs.size(); i ++){
-				Element movie_element =  inqList_childs.get(i).children()
-						.first().children().first();
-				Attributes movie_att = movie_element.attributes();
-				String src = movie_att.get(ATT_SCR);
-				if(src != null){
+				Element movie_elements =  inqList_childs.get(i).children()
+						.first();
+				String href = movie_elements.attr(ATT_HREF);
+				Element movie_element =  movie_elements.children().first();
+				String src = movie_element.attr(ATT_SCR);
+				String alt = movie_element.attr(ATT_ALT);
+				if(alt != null && src != null){
 					src = src.substring(0, src.lastIndexOf("/") + 1) + 
 							src.substring(src.lastIndexOf("_") + 1, src.length());
-					String alt = movie_att.get(ATT_ALT);
+					Movie_Info movie = new Movie_Info(alt, src);
 					//含有nopic.gif表示当前电影没有海报
-					if(!src.endsWith(NO_PIC) && alt != null){
-						ImageWriter.getInstance().addMovieList(new Movie_Info(alt, src));
+					if(!src.endsWith(NO_PIC)){
+						ImageWriter.getInstance().addMovieList(movie);
 					}
+					
+					//获取影片译名
+					try {
+						doc = Jsoup.connect(href)
+								.userAgent(AGENT).timeout(TIME_OUT).post();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Node other_name_node = doc.getElementsByClass("laMovName").first().child(1).child(0).childNode(0);
+					if(other_name_node.childNodeSize() != 0){
+						String other_name = other_name_node.childNode(0).toString();
+						if(other_name.length() != 0){
+							movie.addName(other_name);
+						}
+					}
+					movie_list.add(movie);
 				}
 			}
+			DBWriter.getInstance().addMovieList(movie_list);
 			return inqList_childs.size();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
