@@ -134,16 +134,16 @@ public class M1905Crawler extends BaseCrawler{
 					try {
 						doc = Jsoup.connect(href)
 								.userAgent(AGENT).timeout(TIME_OUT).post();
+						Node other_name_node = doc.getElementsByClass("laMovName").first().child(1).child(0).childNode(0);
+						if(other_name_node.childNodeSize() != 0){
+							String other_name = other_name_node.childNode(0).toString();
+							if(other_name.length() != 0){
+								movie.addName(other_name);
+							}
+						}
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-					Node other_name_node = doc.getElementsByClass("laMovName").first().child(1).child(0).childNode(0);
-					if(other_name_node.childNodeSize() != 0){
-						String other_name = other_name_node.childNode(0).toString();
-						if(other_name.length() != 0){
-							movie.addName(other_name);
-						}
 					}
 					movie_list.add(movie);
 				}
