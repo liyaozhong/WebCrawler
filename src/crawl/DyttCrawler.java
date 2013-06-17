@@ -1,7 +1,6 @@
 package crawl;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,9 +8,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,68 +21,23 @@ import witer.ImageWriter;
 public class DyttCrawler extends BaseCrawler{
 	
 	private static final String ROOT_URL = "http://www.dytt8.net/";
-	private static final String NEW_MOVIE_URL = "html/gndy/dyzz/list_23_%d.html";
-	private int MAX_PAGE = 1;
-	private final static int TIME_OUT = 5000;
-	private final static String AGENT = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)";
-	private final static int THREAD_NUM = 10;
-	private final String movie_src = "Dytt";
-	
+		
 	public static void main(String[] args) {
 		DyttCrawler dc = new DyttCrawler();
 		dc.begin();
 	}
 	
 	public DyttCrawler(){
-		
+		movie_src = "Dytt";
+		CRAWLABLE_URLS.add("http://www.dytt8.net/html/gndy/china/list_4_%d.html");
+		CRAWLABLE_URLS.add("http://www.dytt8.net/html/gndy/rihan/list_6_%d.html");
+		CRAWLABLE_URLS.add("http://www.dytt8.net/html/gndy/oumei/list_7_%d.html");
 	}
 		
-	private void begin(){
-		//文件目录初始化
-		File f = new File("image/" + movie_src);
-		f.mkdir();
-		//获取max page
-		if(!getMaxPage()){
-			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++get max page failed! halting++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			return;
-		}
-		DBWriter.getInstance().setDBName(movie_src);
-		DBWriter.getInstance().start();
-		ImageWriter.getInstance().setMovieSrc(movie_src);
-		ImageWriter.getInstance().start();
-		ExecutorService exe = Executors.newFixedThreadPool(THREAD_NUM);
-		CountDownLatch cdl = new CountDownLatch(THREAD_NUM);
-		for(int thread_id = 1; thread_id <= THREAD_NUM; thread_id ++){
-			exe.execute(new MoiveCrawler(cdl, thread_id));
-		}
-		try {
-			cdl.await();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		DBWriter.getInstance().halt();
-		ImageWriter.getInstance().halt();
-		exe.shutdown();
+	protected void begin(){
+		super.begin();
 	}
 	
-	/**
-	 * 指定线程按规则爬取页面
-	 * @param id : 当前线程ID
-	 */
-	protected void crawl(int id){
-		int total = 0;
-		int page_counter = 0 + id;
-		for(;page_counter <= MAX_PAGE; page_counter += THREAD_NUM){
-			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": crawling page: " + page_counter + "++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			String sUrl = ROOT_URL + String.format(NEW_MOVIE_URL, page_counter);
-			String s = getContent(sUrl);
-			int counter = crawlMovies(id, s);
-			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": " + counter + " movies crawled++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			total += counter;
-		}
-		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": " + total + " movies crawled++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-	}
 	
 	/**
 	 * 获取指定网页内容
@@ -112,28 +63,31 @@ public class DyttCrawler extends BaseCrawler{
 		return sb.toString();
 	}
 	
+	
 	/**
 	 * 获取当前最大页
 	 * @return MAX_PAGE
 	 */
-	private boolean getMaxPage(){
-		String sUrl = ROOT_URL + String.format(NEW_MOVIE_URL, 1);
-		String s = getContent(sUrl);
-		String regex = "<a href=(\"|\')list_23_[0-9]{1,}.html(\"|\')>末页</a>";
-		Pattern pt = Pattern.compile(regex);
-		Matcher mt = pt.matcher(s);
-		while(mt.find()){
-			String str = mt.group();
-			str = str.substring(17, str.length() - 13);
-			try {
-				MAX_PAGE = Integer.parseInt(str);
-				System.out.println("last page found: " + MAX_PAGE);
-				return true;
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
+	protected boolean getMaxPage(){
+		
+		for(int i = 0; i < CRAWLABLE_URLS.size() ; i ++){
+			String url = CRAWLABLE_URLS.get(i);
+			String content = getContent(String.format(url, 1));
+			String regex = "共\\d+页/\\d+条记录";
+			Pattern pt = Pattern.compile(regex);
+			Matcher mt = pt.matcher(content);
+			if(mt.find()){
+				String str = mt.group();
+				str = str.substring(1, str.indexOf("/") - 1);
+				try {
+					CRAWLABLE_MAX_PAGE.add(i, Integer.parseInt(str));
+					System.out.println("last page found: " + Integer.parseInt(str));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	private final static String MOVIE_URL_PATTERN = "<a href=\"/html/gndy/dyzz/[0-9]{1,}/[0-9]{1,}.html\"";
@@ -145,10 +99,11 @@ public class DyttCrawler extends BaseCrawler{
 	/**
 	 * 获取电影信息
 	 * @param id : 当前线程ID
-	 * @param s : 网页源代码
+	 * @param s : 网页网址
 	 * @return 当前页获取电影数量
 	 */
-	private int crawlMovies(int id, String s){
+	protected int crawlMovies(int id, String sUrl){
+		String s = getContent(sUrl);
 		int movie_counter = 0;
 		ArrayList<Movie_Info> movie_list = new ArrayList<Movie_Info>();
 		Pattern pt = Pattern.compile(MOVIE_URL_PATTERN);
@@ -156,22 +111,7 @@ public class DyttCrawler extends BaseCrawler{
 		while(mt.find()){
 			String str = mt.group();
 			str =ROOT_URL + str.substring(10, str.length() - 1);
-//			System.out.println("thread + " + id + ": crawling movie at :" + str);
 			Movie_Info movie_info = new Movie_Info();
-
-//			Document doc = null;
-//			try {
-//				doc = Jsoup.connect(str)
-//						.userAgent(AGENT).timeout(TIME_OUT).get();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			if(doc == null){
-//				return 0;
-//			}
-//			List<Node> e = doc.getElementById("Zoom").childNode(2).childNodes();
-//			Node n = e.get(1);
 
 			String content = getContent(str);
 			for(int i = 0; i < MOVIE_PATTERNS.length; i ++){

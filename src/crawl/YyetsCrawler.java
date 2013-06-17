@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import model.Movie_Info;
 import util.BasicUtil;
@@ -22,99 +19,59 @@ import witer.DBWriter;
 import witer.ImageWriter;
 
 public class YyetsCrawler extends BaseCrawler{
-	
-	private final static int TIME_OUT = 5000;
-	private final static String AGENT = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)";
-	private final static String Yyets_MOVIE_URL = "http://www.yyets.com/resourcelist?page=%d&channel=&area=&category=&format=&sort=";
-	private static int MAX_PAGE = 0;
-	private final String movie_src = "Yyets";
-	private final static int THREAD_NUM = 10;
-	
+		
 	public static void main(String[] args){
 		YyetsCrawler yc = new YyetsCrawler();
 		yc.begin();
 	}
 	
-	private void begin(){
-		//文件目录初始化
-		File f = new File("image/" + movie_src);
+	public YyetsCrawler(){
+		movie_src = "Yyets";
+		CRAWLABLE_URLS.add("http://www.yyets.com/resourcelist?page=%d&channel=&area=&category=&format=&sort=");
+	}
+	
+	protected void begin(){
+		File f = new File("regextest");
 		f.mkdir();
-		f = new File("regextest");
-		f.mkdir();
-		//获取max page
-		if(!getMaxPage()){
-			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++get max page failed!++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			return;
-		}
-		ImageWriter.getInstance().setMovieSrc(movie_src);
-		ImageWriter.getInstance().start();
-		DBWriter.getInstance().setDBName(movie_src);
-		DBWriter.getInstance().start();
-		ExecutorService exe = Executors.newFixedThreadPool(THREAD_NUM);
-		CountDownLatch cdl = new CountDownLatch(THREAD_NUM);
-		for(int thread_id = 1; thread_id <= THREAD_NUM; thread_id ++){
-			exe.execute(new MoiveCrawler(cdl, thread_id));
-		}
-		try {
-			cdl.await();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ImageWriter.getInstance().halt();
-		DBWriter.getInstance().halt();
-		exe.shutdown();
+		super.begin();
 	}
 	
 	/**
 	 * 获取当前最大页
 	 * @return MAX_PAGE
 	 */
-	private boolean getMaxPage(){
-		Document doc = null;
-		String url = String.format(Yyets_MOVIE_URL, 1);
-		try {
-			doc = Jsoup.connect(url)
-					.userAgent(AGENT).timeout(TIME_OUT * 2).post();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	protected boolean getMaxPage(){
+		
+		for(int i = 0; i < CRAWLABLE_URLS.size() ; i ++){
+			Document doc = null;
+			String url = String.format(CRAWLABLE_URLS.get(i), 1);
+			try {
+				doc = Jsoup.connect(url)
+						.userAgent(AGENT).timeout(TIME_OUT * 2).post();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(doc == null){
+				return false;
+			}
+			//find last page
+			try {
+				List<Node> max_page_nodes = doc.getElementsByClass("pages").first().childNode(0).childNodes();
+				Node max_page_node = max_page_nodes.get(max_page_nodes.size() - 1).childNode(0);
+				String max_page_str = max_page_node.toString();
+				max_page_str = max_page_str.substring(max_page_str.lastIndexOf(".") + 1);
+				CRAWLABLE_MAX_PAGE.add(i, Integer.parseInt(max_page_str));
+				System.out.println("last page found: " + Integer.parseInt(max_page_str));
+				return true;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				LogUtil.getInstance().write("[error] getting max page at URL : " + url);
+				return false;
+			}
 		}
-		if(doc == null){
-			return false;
-		}
-		//find last page
-		try {
-			List<Node> max_page_nodes = doc.getElementsByClass("pages").first().childNode(0).childNodes();
-			Node max_page_node = max_page_nodes.get(max_page_nodes.size() - 1).childNode(0);
-			String max_page_str = max_page_node.toString();
-			max_page_str = max_page_str.substring(max_page_str.lastIndexOf(".") + 1);
-			MAX_PAGE = Integer.parseInt(max_page_str);
-			System.out.println("last_page = " + MAX_PAGE);
-			return true;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			LogUtil.getInstance().write("[error] getting max page at URL : " + url);
-			return false;
-		}
-	}
-	
-	/**
-	 * 指定线程按规则爬取页面
-	 * @param id : 当前线程ID
-	 */
-	protected void crawl(int id){
-		int total = 0;
-		int page_counter = 0 + id;
-		for(;page_counter <= MAX_PAGE; page_counter += THREAD_NUM){
-			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": crawling page: " + page_counter + "++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			String sUrl = String.format(Yyets_MOVIE_URL, page_counter);
-			int counter = crawlMovies(id, sUrl);
-			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": " + counter + " movies crawled at page: " + page_counter + "++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			total += counter;
-		}
-		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": " + total + " movies crawled++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		return true;
 	}
 	
 	/**
@@ -123,7 +80,7 @@ public class YyetsCrawler extends BaseCrawler{
 	 * @param sUrl : 网页地址
 	 * @return 当前页获取电影数量
 	 */
-	private int crawlMovies(int id, String sUrl){
+	protected int crawlMovies(int id, String sUrl){
 		Document doc = null;
 		try {
 			doc = Jsoup.connect(sUrl)
