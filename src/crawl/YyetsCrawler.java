@@ -170,8 +170,9 @@ public class YyetsCrawler extends BaseCrawler{
 					}
 					info.addName(tmp.trim());
 				}
-				
-				ImageWriter.getInstance().addMovieList(info);
+				if(info.getMovieName() != null){
+					ImageWriter.getInstance().addMovieList(info);
+				}
 				//get movie
 				try {
 					doc = Jsoup.connect(href)

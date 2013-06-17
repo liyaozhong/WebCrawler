@@ -184,8 +184,9 @@ public class DyttCrawler extends BaseCrawler{
 				parsePattern(movie_info, content, i);
 			}
 			movie_counter ++;
-			ImageWriter.getInstance().addMovieList(movie_info.clone());
-			movie_info.setHaiBaoPath("image/" + movie_src + "/" + movie_info.getMovieName() + ".jpg");
+			if(movie_info.getMovieName() != null){
+				ImageWriter.getInstance().addMovieList(movie_info.clone());
+			}
 			movie_list.add(movie_info);
 		}
 		DBWriter.getInstance().addMovieList(movie_list);
@@ -215,12 +216,26 @@ public class DyttCrawler extends BaseCrawler{
 				}
 				break;
 			case 1:
-				str = str.substring(6, str.length() - 6);
+				if(str.startsWith("◎译　　名")){
+					str = str.substring(6, str.length() - 6);
+				}else if(str.startsWith("◎片　　名")){
+					str = str.substring(6, str.length() - 6);
+				}else if(str.startsWith("◎中 文 名")){
+					str = str.substring(7, str.length() - 7);
+				}else if(str.startsWith("◎英 文 名")){
+					str = str.substring(7, str.length() - 7);
+				}else if(str.startsWith("◎译 　　名")){
+					str = str.substring(7, str.length() - 7);
+				}else if(str.startsWith("◎片 　　名")){
+					str = str.substring(7, str.length() - 7);
+				}
+				while(str.startsWith("　")){
+					str = str.substring(1, str.length() - 1);
+				}
 				StringTokenizer st = new StringTokenizer(str, "/");
 				if(st.countTokens() == 0){
-					str = str.trim();
-					movie_info.setMovieName(str);
-					movie_info.addName(str);
+					movie_info.setMovieName(str.trim());
+					movie_info.addName(str.trim());
 				}
 				while(st.hasMoreElements()){
 					String tmp = st.nextToken().trim();

@@ -112,12 +112,14 @@ public class M1905Crawler extends BaseCrawler{
 						.first().children().first();
 				Attributes movie_att = movie_element.attributes();
 				String src = movie_att.get(ATT_SCR);
-				src = src.substring(0, src.lastIndexOf("/") + 1) + 
-						src.substring(src.lastIndexOf("_") + 1, src.length());
-				String alt = movie_att.get(ATT_ALT);
-				//含有nopic.gif表示当前电影没有海报
-				if(!src.endsWith(NO_PIC)){
-					ImageWriter.getInstance().addMovieList(new Movie_Info(alt, src));
+				if(src != null){
+					src = src.substring(0, src.lastIndexOf("/") + 1) + 
+							src.substring(src.lastIndexOf("_") + 1, src.length());
+					String alt = movie_att.get(ATT_ALT);
+					//含有nopic.gif表示当前电影没有海报
+					if(!src.endsWith(NO_PIC) && alt != null){
+						ImageWriter.getInstance().addMovieList(new Movie_Info(alt, src));
+					}
 				}
 			}
 			return inqList_childs.size();
