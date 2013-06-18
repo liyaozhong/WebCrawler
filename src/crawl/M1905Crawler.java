@@ -18,14 +18,11 @@ import witer.ImageWriter;
 
 public class M1905Crawler extends BaseCrawler{
 	
-	private final static String M1905_MOVIE_URL = "http://www.m1905.com/mdb/film/list/year-%d/o0d0p%d.html";
 	private final static String ID_NEW_PAGE = "new_page";
 	private final static String ATT_SCR = "src";
 	private final static String ATT_ALT = "alt";
 	private final static String ATT_HREF = "href";
 	private final static String NO_PIC = "nopic.gif";
-	private final static int[] YEAR = {2013,2012,2011,2010,2009,2008,2007,2006,2005,2004,2003,2001,2000};
-	private static int[] LAST_PAGE = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 	
 	public static void main(String[] args){
 		M1905Crawler mc = new M1905Crawler();
@@ -108,9 +105,11 @@ public class M1905Crawler extends BaseCrawler{
 					}catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						System.err.println(src);
 					}catch (NullPointerException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						System.err.println(src);
 					}
 					movie_list.add(movie);
 				}
