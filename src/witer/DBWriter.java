@@ -189,6 +189,7 @@ public class DBWriter {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			LogUtil.getInstance().write(e.getMessage() + "\n");
 			e.printStackTrace();
 		}finally{
 			try {

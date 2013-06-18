@@ -54,6 +54,7 @@ public class M1905Crawler extends BaseCrawler{
 			e.printStackTrace();
 		}
 		if(doc == null){
+			LogUtil.getInstance().write(this.getClass().getName() + " : crawlMovies Method getContent return null \n" + sUrl);
 			return 0;
 		}
 		
@@ -91,12 +92,12 @@ public class M1905Crawler extends BaseCrawler{
 						}
 					}catch (IOException e) {
 						// TODO Auto-generated catch block
+						LogUtil.getInstance().write(e.getMessage() + "\nIOException: " + href + "\n");
 						e.printStackTrace();
-						System.err.println(href);
 					}catch (NullPointerException e) {
 						// TODO Auto-generated catch block
+						LogUtil.getInstance().write(e.getMessage() + "\nIOException: " + href + "\n");
 						e.printStackTrace();
-						System.err.println(href);
 					}
 					movie_list.add(movie);
 				}
@@ -105,8 +106,8 @@ public class M1905Crawler extends BaseCrawler{
 			return inqList_childs.size();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			LogUtil.getInstance().write(e.getMessage() + "\nException");
 			e.printStackTrace();
-			LogUtil.getInstance().write(this.getClass().getName() + "	[error] crawling movies at URL : " + sUrl);
 			return 0;
 		}
 	}
@@ -114,6 +115,7 @@ public class M1905Crawler extends BaseCrawler{
 	@Override
 	protected boolean getMaxPage() {
 		for(int i = 0; i < CRAWLABLE_URLS.size() ; i ++){
+			int retry_counter = 0;
 			Document doc = null;
 			String url = String.format(CRAWLABLE_URLS.get(i), 1);
 			try {
@@ -123,8 +125,26 @@ public class M1905Crawler extends BaseCrawler{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			//doc为空，retry2次
+			while(doc == null){
+				if(++retry_counter < 3){
+					LogUtil.getInstance().write(this.getClass().getName() + " : getMaxPage Method getContent return null . retrying time : " + retry_counter);
+					try {
+						doc = Jsoup.connect(url)
+								.userAgent(AGENT).timeout(TIME_OUT * 2).post();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						LogUtil.getInstance().write(e.getMessage() + "\nIOException : " + url + "\n");
+						e.printStackTrace();
+					}
+				}else{
+					break;
+				}
+			}
 			if(doc == null){
-				return false;
+				LogUtil.getInstance().write(this.getClass().getName() + " : getMaxPage Method getContent return null \n" + url);
+				CRAWLABLE_MAX_PAGE.add(i, 0);
+				continue;
 			}
 			//find last page
 			try {
@@ -134,11 +154,13 @@ public class M1905Crawler extends BaseCrawler{
 				String num = totall_num_str.substring(2, totall_num_str.length() - 3);
 				int last_page = Integer.parseInt(num) / 30 + 1;
 				CRAWLABLE_MAX_PAGE.add(i, last_page);
+				LogUtil.getInstance().write("CRAWLABLE_MAX_PAGE : index=" + i + " value=" + last_page);
 				System.out.println("last page found: " + last_page);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				LogUtil.getInstance().write(e.getMessage() + "\nException");
 				e.printStackTrace();
-				LogUtil.getInstance().write(this.getClass().getName() + "	[error] getting max page at URL : " + url);
+				CRAWLABLE_MAX_PAGE.add(i, 0);
 			}
 		}
 		return true;

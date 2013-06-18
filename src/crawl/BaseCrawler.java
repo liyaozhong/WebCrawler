@@ -6,6 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import util.LogUtil;
 import witer.DBWriter;
 import witer.ImageWriter;
 
@@ -31,11 +32,14 @@ public abstract class BaseCrawler {
 			if(sUrl == null){
 				break;
 			}
+			LogUtil.getInstance().write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": crawling : " + sUrl + "++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": crawling : " + sUrl + "++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 			int counter = crawlMovies(id, sUrl);
 			total += counter;
+			LogUtil.getInstance().write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": " + counter + " movies crawled++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": " + counter + " movies crawled++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		}
+		LogUtil.getInstance().write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": " + total + " movies crawled++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++thread " + id + ": " + total + " movies crawled++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 	}
 	

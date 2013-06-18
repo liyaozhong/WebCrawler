@@ -91,6 +91,7 @@ public class DyttCrawler extends BaseCrawler{
 			int retry_counter = 0;
 			String url = CRAWLABLE_URLS.get(i);
 			String content = getContent(String.format(url, 1));
+			//content为空，retry2次
 			while(content == null){
 				if(++retry_counter < 3){
 					LogUtil.getInstance().write(this.getClass().getName() + " : getMaxPage Method getContent return null . retrying time : " + retry_counter);
@@ -112,6 +113,7 @@ public class DyttCrawler extends BaseCrawler{
 				try {
 					int last_page = Integer.parseInt(str);
 					CRAWLABLE_MAX_PAGE.add(i, last_page);
+					LogUtil.getInstance().write("CRAWLABLE_MAX_PAGE : index=" + i + " value=" + last_page);
 					System.out.println("last page found: " + last_page);
 				} catch (NumberFormatException e) {
 					LogUtil.getInstance().write(e.getMessage() + "\nNumberFormatException : " + str + "\n");
