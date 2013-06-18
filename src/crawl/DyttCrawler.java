@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import model.Movie_Info;
 
 import util.BasicUtil;
+import util.LogUtil;
 import witer.DBWriter;
 import witer.ImageWriter;
 
@@ -80,9 +81,11 @@ public class DyttCrawler extends BaseCrawler{
 				String str = mt.group();
 				str = str.substring(1, str.indexOf("/") - 1);
 				try {
-					CRAWLABLE_MAX_PAGE.add(i, Integer.parseInt(str));
-					System.out.println("last page found: " + Integer.parseInt(str));
+					int last_page = Integer.parseInt(str);
+					CRAWLABLE_MAX_PAGE.add(i, last_page);
+					System.out.println("last page found: " + last_page);
 				} catch (NumberFormatException e) {
+					LogUtil.getInstance().write(this.getClass().getName() + "	[error] getting max page at URL : " + url);
 					e.printStackTrace();
 				}
 			}

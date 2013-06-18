@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import util.BasicUtil;
@@ -159,14 +160,16 @@ public class ImageWriter {
 	private final static int TIME_OUT = 2;
 	private final static int URL_ERROR = 3;
 	private final static int FILE_EXIST = 4;
+	private final static int UNKOWN_HOST = 5;
 	/**
 	 * 获取单个海报,并写入文件
 	 * @param movie_info
 	 * @return resultCode
 	 */
 	private int write(Movie_Info movie_info){
+		URL url = null;
 		try {
-			URL url = new URL(movie_info.getHaiBaoPath());
+			url = new URL(movie_info.getHaiBaoPath());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
 			conn.setRequestMethod("GET");
 			conn.setConnectTimeout(6 * 1000);
@@ -194,18 +197,24 @@ public class ImageWriter {
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.err.println(url);
 			return URL_ERROR;
 		}catch (SocketTimeoutException e) {
 			// TODO Auto-generated catch block
 			return TIME_OUT;
+		}catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println(url);
+			return UNKOWN_HOST;
 		}catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return WRITE_FAILED;
-		}
-		catch (Exception e) {
+		}catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.err.println(url);
 			return UNKOWN_ERROR;
 		} 
 		return WRITE_OK;

@@ -61,14 +61,13 @@ public class YyetsCrawler extends BaseCrawler{
 				Node max_page_node = max_page_nodes.get(max_page_nodes.size() - 1).childNode(0);
 				String max_page_str = max_page_node.toString();
 				max_page_str = max_page_str.substring(max_page_str.lastIndexOf(".") + 1);
-				CRAWLABLE_MAX_PAGE.add(i, Integer.parseInt(max_page_str));
-				System.out.println("last page found: " + Integer.parseInt(max_page_str));
-				return true;
+				int last_page = Integer.parseInt(max_page_str);
+				CRAWLABLE_MAX_PAGE.add(i, last_page);
+				System.out.println("last page found: " + last_page);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				LogUtil.getInstance().write(this.getClass().getName() + "	[error] getting max page at URL : " + url);
-				return false;
 			}
 		}
 		return true;
