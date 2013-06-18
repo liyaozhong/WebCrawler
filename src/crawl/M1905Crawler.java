@@ -105,11 +105,11 @@ public class M1905Crawler extends BaseCrawler{
 					}catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						System.err.println(src);
+						System.err.println(href);
 					}catch (NullPointerException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						System.err.println(src);
+						System.err.println(href);
 					}
 					movie_list.add(movie);
 				}
