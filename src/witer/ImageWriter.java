@@ -193,12 +193,14 @@ public class ImageWriter {
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return URL_ERROR;
 		}catch (SocketTimeoutException e) {
 			// TODO Auto-generated catch block
 			return TIME_OUT;
 		}catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return WRITE_FAILED;
 		}
 		catch (Exception e) {

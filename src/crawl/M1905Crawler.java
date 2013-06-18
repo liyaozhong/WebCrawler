@@ -122,7 +122,7 @@ public class M1905Crawler extends BaseCrawler{
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			LogUtil.getInstance().write("[error] crawling movies at URL : " + sUrl);
+			LogUtil.getInstance().write(this.getClass().getName() + "	[error] crawling movies at URL : " + sUrl);
 			return 0;
 		}
 	}
@@ -156,7 +156,7 @@ public class M1905Crawler extends BaseCrawler{
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			LogUtil.getInstance().write("[error] getting max page at URL : " + url);
+			LogUtil.getInstance().write(this.getClass().getName() + "	[error] getting max page at URL : " + url);
 			return false;
 		}
 	}

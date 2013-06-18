@@ -90,7 +90,7 @@ public class DyttCrawler extends BaseCrawler{
 		return true;
 	}
 	
-	private final static String MOVIE_URL_PATTERN = "<a href=\"/html/gndy/dyzz/[0-9]{1,}/[0-9]{1,}.html\"";
+	private final static String MOVIE_URL_PATTERN = "<a href=\"/html/gndy/[a-zA-Z]+/[0-9]{1,}/[0-9]{1,}.html\"";
 	private final static String HAIBAO_PATTERN = "<img[^<]*src=\"http.*?(jpg|gif|JPG|GIF)\"";
 	private final static String PIANMING_PATTERN = "(◎译　　名|◎片　　名|◎中 文 名|◎英 文 名|◎译 　　名|◎片 　　名)[^<]*<br />";
 	private final static String XIAZAIMING_PATTERN = "(rmvb|avi|mp4|mkv|RMVB|AVI|PM4|MKV)\">[^<]*(rmvb|avi|mp4|mkv|RMVB|AVI|PM4|MKV)";
@@ -99,7 +99,7 @@ public class DyttCrawler extends BaseCrawler{
 	/**
 	 * 获取电影信息
 	 * @param id : 当前线程ID
-	 * @param s : 网页网址
+	 * @param sUrl : 网页网址
 	 * @return 当前页获取电影数量
 	 */
 	protected int crawlMovies(int id, String sUrl){
