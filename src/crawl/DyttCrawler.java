@@ -156,20 +156,20 @@ public class DyttCrawler extends BaseCrawler{
 				break;
 			case 1:
 				if(str.startsWith("◎译　　名")){
-					str = str.substring(6, str.length() - 6);
+					str = str.substring(6, str.lastIndexOf("<"));
 				}else if(str.startsWith("◎片　　名")){
-					str = str.substring(6, str.length() - 6);
+					str = str.substring(6, str.lastIndexOf("<"));
 				}else if(str.startsWith("◎中 文 名")){
-					str = str.substring(7, str.length() - 7);
+					str = str.substring(7, str.lastIndexOf("<"));
 				}else if(str.startsWith("◎英 文 名")){
-					str = str.substring(7, str.length() - 7);
+					str = str.substring(7, str.lastIndexOf("<"));
 				}else if(str.startsWith("◎译 　　名")){
-					str = str.substring(7, str.length() - 7);
+					str = str.substring(7, str.lastIndexOf("<"));
 				}else if(str.startsWith("◎片 　　名")){
-					str = str.substring(7, str.length() - 7);
+					str = str.substring(7, str.lastIndexOf("<"));
 				}
 				while(str.startsWith("　")){
-					str = str.substring(1, str.length() - 1);
+					str = str.substring(1, str.length());
 				}
 				StringTokenizer st = new StringTokenizer(str, "/");
 				if(st.countTokens() == 0){
