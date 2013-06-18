@@ -64,7 +64,7 @@ public class DBWriter {
 		db_name = name;
 	}
 	
-	private Connection conn = null;
+	
 	private static DBWriter wdb;
 	private Runnable task;
 	private DBWriter(){
@@ -140,6 +140,7 @@ public class DBWriter {
 		
 	private void write(ArrayList<Movie_Info> movie_list){
 		Statement stmt = null;
+		Connection conn = null;
 		try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
@@ -206,6 +207,7 @@ public class DBWriter {
 	
 	private void clearDBCrawledUrls(){
 		Statement stmt = null;
+		Connection conn = null;
 		try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
@@ -237,6 +239,7 @@ public class DBWriter {
 	
 	public synchronized boolean ifCrawled(String sUrl){
 		Statement stmt = null;
+		Connection conn = null;
 		try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
