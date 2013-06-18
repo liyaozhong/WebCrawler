@@ -93,10 +93,11 @@ public class DyttCrawler extends BaseCrawler{
 		return true;
 	}
 	
-	
 	private final static String MOVIE_URL_PATTERN = "<a href=\"/html/gndy/[a-zA-Z]+/[0-9]{1,}/[0-9]{1,}.html\"";
 	private final static String HAIBAO_PATTERN = "<img[^<]*src=\"http.*?(jpg|gif|JPG|GIF)\"";
-	private final static String PIANMING_PATTERN = "(◎译　　名|◎片　　名|◎中 文 名|◎英 文 名|◎译 　　名|◎片 　　名|◎中  文 名|◎英  文 名|◎影片原名|◎中文译名)[^<]*<br />";
+	private final static String PIANMING_PATTERN = "(◎译　　名|◎片　　名|◎中 文 名|◎英 文 名|◎译 　　名|◎片 　　名|◎中  文 名|◎英  文 名|◎影片原名|◎中文译名|" +
+													"中 文 名:|英 文 名:|片名：|英文片名：|◎中文片名：|◎原 片 名：|◎原　　名：|◎中文　名|◎中文片名|◎英文片名|" +
+													"【译　　名】|【片　　名】|◎英文原名|◎中文原名)[^<]*<br />";
 	private final static String XIAZAIMING_PATTERN = "(rmvb|avi|mp4|mkv|RMVB|AVI|PM4|MKV)\">[^<]*(rmvb|avi|mp4|mkv|RMVB|AVI|PM4|MKV)";
 	private final static String[] MOVIE_PATTERNS = {HAIBAO_PATTERN, PIANMING_PATTERN, XIAZAIMING_PATTERN};
 
@@ -125,7 +126,7 @@ public class DyttCrawler extends BaseCrawler{
 			}
 			movie_counter ++;
 			if(movie_info.getMovieName() != null){
-				ImageWriter.getInstance().addMovieList(movie_info.clone());
+//				ImageWriter.getInstance().addMovieList(movie_info.clone());
 			}
 			movie_list.add(movie_info);
 		}
@@ -133,6 +134,9 @@ public class DyttCrawler extends BaseCrawler{
 		return movie_counter;
 	}
 
+	private static final int HAIBAO_MATCH = 0;
+	private static final int PIANMING_MATCH = 1;
+	private static final int XIAZAIMING_MATCH = 2;
 	/**
 	 * 按照正则表达式解析电影信息
 	 * @param movie_info : 电影类
@@ -148,35 +152,28 @@ public class DyttCrawler extends BaseCrawler{
 			str = BasicUtil.formatString(str);
 			//用正则表达式进行匹配,通过字符串处理找到相应内容
 			switch(n){
-			case 0:
+			case HAIBAO_MATCH:
 				str = str.substring(str.indexOf("src=\"") + 5, str.length() - 1);
 				if(!movie_info.hasHaiBaoPath()){
 					str = str.trim();
 					movie_info.setHaiBaoPath(str);
 				}
 				break;
-			case 1:	
+			case PIANMING_MATCH:	
+				
 				//蛋疼的电影名匹配
-				if(str.startsWith("◎译　　名")){
+				if(str.startsWith("◎译　　名") || str.startsWith("◎片　　名") || str.startsWith("◎影片原名") || str.startsWith("◎中文译名") ||
+						str.startsWith("英文片名：") || str.startsWith("◎中文　名") || str.startsWith("◎中文片名") || str.startsWith("◎英文片名") ||
+						str.startsWith("◎英文原名") || str.startsWith("◎中文原名")){
 					str = str.substring(6, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎片　　名")){
-					str = str.substring(6, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎中 文 名")){
+				}else if(str.startsWith("◎中 文 名") || str.startsWith("◎英 文 名") || str.startsWith("◎译 　　名") || str.startsWith("◎片 　　名") ||
+						str.startsWith("中 文 名:") || str.startsWith("英 文 名:") || str.startsWith("◎中文片名：") || str.startsWith("◎原　　名：") ||
+						str.startsWith("【译　　名】") || str.startsWith("【片　　名】")){
 					str = str.substring(7, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎英 文 名")){
-					str = str.substring(7, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎译 　　名")){
-					str = str.substring(7, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎片 　　名")){
-					str = str.substring(7, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎中  文 名")){
+				}else if(str.startsWith("◎中  文 名") || str.startsWith("◎英  文 名") || str.startsWith("◎原 片 名：")){
 					str = str.substring(8, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎英  文 名")){
-					str = str.substring(8, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎影片原名")){
-					str = str.substring(6, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎中文译名")){
-					str = str.substring(6, str.lastIndexOf("<"));
+				}else if(str.startsWith("片名：")){
+					str = str.substring(4, str.lastIndexOf("<"));
 				}
 				//去除电影名前的“空格”（trim对此种空格无效）
 				while(str.startsWith("　")){
@@ -195,7 +192,7 @@ public class DyttCrawler extends BaseCrawler{
 					}
 				}
 				break;
-			case 2:
+			case XIAZAIMING_MATCH:
 				str = str.substring(str.indexOf("\">") + 2).trim();
 				movie_info.addDownLoadLinks(str, str.substring(str.lastIndexOf("/") + 1));
 				break;
@@ -203,10 +200,15 @@ public class DyttCrawler extends BaseCrawler{
 			}
 		}
 		//部分电影仍旧无法识别电影名，通过title从中提取。
-		if(n == 1 && !movie_info.hasName()){
-			String title = s.substring(s.indexOf("<title>"), s.indexOf("</title>"));
-			String name = title.substring(title.indexOf("《") + 1, title.indexOf("》"));
-			movie_info.setMovieName(name);
+		if(n == PIANMING_MATCH && !movie_info.hasName()){
+			try {
+				String title = s.substring(s.indexOf("<title>"), s.indexOf("</title>"));
+				String name = title.substring(title.indexOf("《") + 1, title.indexOf("》"));
+				movie_info.setMovieName(name);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

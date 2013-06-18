@@ -30,6 +30,12 @@ public class BasicUtil {
 		if(str.contains("&ndash;")){
 			str = str.replaceAll("&ndash;", "–");
 		}
+		if(str.contains("&quot;")){
+			str = str.replaceAll("&quot;", "\"");
+		}
+		if(str.contains("&deg;")){
+			str = str.replaceAll("&quot;", "°");
+		}
 		return str;
 	}
 	
