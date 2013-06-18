@@ -29,7 +29,7 @@ public class ImageWriter {
 	
 	public synchronized static ImageWriter getInstance(){
 		if(iw == null){
-			return new ImageWriter();
+			iw = new ImageWriter();
 		}
 		return iw;
 	}
@@ -168,6 +168,9 @@ public class ImageWriter {
 	 */
 	private int write(Movie_Info movie_info){
 		URL url = null;
+		InputStream inputStream = null;
+		ByteArrayOutputStream outstream = null;
+		FileOutputStream fileoutStream = null;
 		try {
 			url = new URL(movie_info.getHaiBaoPath());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
@@ -175,8 +178,8 @@ public class ImageWriter {
 			conn.setConnectTimeout(6 * 1000);
 			conn.setReadTimeout(6 * 1000);
 			if (conn.getResponseCode() == 200) { 
-				InputStream inputStream = conn.getInputStream(); 
-			    ByteArrayOutputStream outstream = new ByteArrayOutputStream(); 
+				inputStream = conn.getInputStream(); 
+			    outstream = new ByteArrayOutputStream(); 
 			    byte[] buffer = new byte[1024 * 50];
 			    int len = -1; 
 			    while ((len = inputStream.read(buffer)) != -1) { 
@@ -187,12 +190,8 @@ public class ImageWriter {
 				if(file.exists()){
 					return FILE_EXIST;
 				}
-			    FileOutputStream fileoutStream = new FileOutputStream(file);
+			    fileoutStream = new FileOutputStream(file);
 			    fileoutStream.write(outstream.toByteArray()); 
-			    outstream.close(); 
-			    inputStream.close();
-			    fileoutStream.flush();
-			    fileoutStream.close();
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -216,7 +215,23 @@ public class ImageWriter {
 			e.printStackTrace();
 			System.err.println(url);
 			return UNKOWN_ERROR;
-		} 
+		} finally{
+		    try {
+		    	if(outstream != null){
+		    		outstream.close();
+		    	}
+		    	if(inputStream != null){
+		    		inputStream.close();
+		    	}
+		    	if(fileoutStream != null){
+		    		fileoutStream.flush();
+					fileoutStream.close();
+		    	}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return WRITE_OK;
 	}
 }

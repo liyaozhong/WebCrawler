@@ -12,6 +12,7 @@ public class DBWriter {
 	private static final String driver = "com.mysql.jdbc.Driver";
 	private static final String url = "jdbc:mysql://127.0.0.1:3306/";
 	private static String db_name = null;
+	private static final String DB_CRAWLED_URLS = "crawled_urls";
 	private static final String root = "root";
 	private static final String password = "liyaozhong";
 	
@@ -64,10 +65,12 @@ public class DBWriter {
 	private Connection conn = null;
 	private static DBWriter wdb;
 	private Runnable task;
-	private DBWriter(){}
+	private DBWriter(){
+		clearDBCrawledUrls();
+	}
 	public synchronized static DBWriter getInstance(){
 		if(wdb == null){
-			return new DBWriter();
+			wdb = new DBWriter();
 		}
 		return wdb;
 	}
@@ -151,17 +154,32 @@ public class DBWriter {
 				stmt = conn.createStatement();
 				ArrayList<String> sql = creatMovie_InfoSQL(movie_list);
 				for(int i = 0; i < sql.size(); i ++){
-					stmt.execute(sql.get(i));
+					try {
+						stmt.execute(sql.get(i));
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 				sql = creatMovie_NameSQL(movie_list);
 				for(int i = 0; i < sql.size(); i ++){
-					stmt.execute(sql.get(i));
+					try {
+						stmt.execute(sql.get(i));
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 				sql = creatMovie_DONWLOADLINKSQL(movie_list);
 				for(int i = 0; i < sql.size(); i ++){
-					stmt.execute(sql.get(i));
+					try {
+						stmt.execute(sql.get(i));
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 				conn.commit();
@@ -169,13 +187,86 @@ public class DBWriter {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			try {
+				if(stmt != null){
+					stmt.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+	}
+	
+	private void clearDBCrawledUrls(){
+		Statement stmt = null;
 		try {
-			stmt.close();
-			conn.close();
-		} catch (SQLException e) {
+			Class.forName(driver);
+		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		try {
+			conn = DriverManager.getConnection(url + DB_CRAWLED_URLS, root, password);
+			stmt = conn.createStatement();
+			String sql = "delete from urls";
+			stmt.execute(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			try {
+				if(stmt != null){
+					stmt.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public synchronized boolean ifCrawled(String sUrl){
+		Statement stmt = null;
+		try {
+			Class.forName(driver);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			conn = DriverManager.getConnection(url + DB_CRAWLED_URLS, root, password);
+			stmt = conn.createStatement();
+			String sql = "select * from urls where url = '" + sUrl + "'";
+			ResultSet result = stmt.executeQuery(sql);
+			if(result.next()){
+				return true;
+			}
+			sql = "insert into urls values ('" + sUrl + "')";
+			stmt.execute(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			try {
+				if(stmt != null){
+					stmt.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 }

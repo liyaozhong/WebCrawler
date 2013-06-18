@@ -28,14 +28,23 @@ public class LogUtil {
 		File f = getCurLogFile();
 		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String time = sdf.format(utildate);
+		FileWriter write = null;
 		try {
-			FileWriter write = new FileWriter(f, true);
+			write = new FileWriter(f, true);
 			write.append(time + "		" + log + "\n");
-			write.flush();
-			write.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			try {
+				if(write != null){
+					write.flush();
+					write.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}

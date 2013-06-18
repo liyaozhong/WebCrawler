@@ -115,7 +115,9 @@ public class DyttCrawler extends BaseCrawler{
 			String str = mt.group();
 			str =ROOT_URL + str.substring(10, str.length() - 1);
 			Movie_Info movie_info = new Movie_Info();
-
+			if(DBWriter.getInstance().ifCrawled(str)){
+				continue;
+			}
 			String content = getContent(str);
 			for(int i = 0; i < MOVIE_PATTERNS.length; i ++){
 				parsePattern(movie_info, content, i);
