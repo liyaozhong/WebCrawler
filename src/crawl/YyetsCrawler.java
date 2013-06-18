@@ -188,7 +188,7 @@ public class YyetsCrawler extends BaseCrawler{
 						}
 //						info.addName(BasicUtil.formatString(down_load_name));
 						//RegexUtil.getMovieName(BasicUtil.formatString(down_load_name));
-						info.addDownLoadLinks(down_load_links);
+						info.addDownLoadLinks(down_load_links, down_load_name);
 					}
 					
 				}

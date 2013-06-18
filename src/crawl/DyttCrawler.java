@@ -186,7 +186,7 @@ public class DyttCrawler extends BaseCrawler{
 				break;
 			case 2:
 				str = str.substring(str.indexOf("\">") + 2).trim();
-				movie_info.addDownLoadLinks(str);
+				movie_info.addDownLoadLinks(str, str.substring(str.lastIndexOf("/") + 1));
 				break;
 			default:break;
 			}

@@ -51,8 +51,10 @@ public class DBWriter {
 		for(int i = 0; i < movie_list.size(); i ++){
 			Movie_Info info = movie_list.get(i);
 			ArrayList<String> downloadlinks = info.getDownLoadLinks();
+			ArrayList<String> downloadnames = info.getDownLoadNames();
 			for(int j = 0; j < downloadlinks.size(); j ++){
-				sql.add("insert into moviedownloadlinks (MOVIE_NAME, DOWN_LOAD_LINK) values('"+info.getMovieName()+"', '"+downloadlinks.get(j)+"')");
+				sql.add("insert into moviedownloadlinks (MOVIE_NAME, DOWN_LOAD_LINK, DOWN_LOAD_NAME) " +
+						"values('"+info.getMovieName()+"', '"+downloadlinks.get(j)+"', '" +downloadnames.get(j)+"')");
 			}
 		}
 		return sql;

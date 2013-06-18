@@ -7,6 +7,7 @@ public class Movie_Info{
 	private String haibao_path = null;
 	private ArrayList<String> names = new ArrayList<String>();
 	private ArrayList<String> downloadlinks = new ArrayList<String>();
+	private ArrayList<String> downloadnames = new ArrayList<String>();
 	
 	public Movie_Info(){}
 	public Movie_Info(String name, String path){
@@ -18,6 +19,7 @@ public class Movie_Info{
 		this.haibao_path = info.haibao_path;
 		this.names = info.names;
 		this.downloadlinks = info.downloadlinks;
+		this.downloadnames = info.downloadnames;
 	}
 	public boolean hasName(){
 		return this.movie_name != null;
@@ -34,17 +36,24 @@ public class Movie_Info{
 	public void setNames(ArrayList<String> names){
 		this.names = names;
 	}
-	public void setDownLoadLinks(ArrayList<String> downloadlinks){
-		this.downloadlinks = downloadlinks;
-	}
+//	public void setDownLoadLinks(ArrayList<String> downloadlinks){
+//		this.downloadlinks = downloadlinks;
+//	}
+//	public void setDownLoadNames(ArrayList<String> downloadnames){
+//		this.downloadnames = downloadnames;
+//	}
 	public void addName(String name){
 		this.names.add(name);
 	}
-	public void addDownLoadLinks(ArrayList<String> downloadlinks){
+	public void addDownLoadLinks(ArrayList<String> downloadlinks, String downloadname){
 		this.downloadlinks.addAll(downloadlinks);
+		for(int i = 0; i < downloadlinks.size() ; i++){
+			this.downloadnames.add(downloadname);
+		}
 	}
-	public void addDownLoadLinks(String downloadlink){
+	public void addDownLoadLinks(String downloadlink, String downloadname){
 		this.downloadlinks.add(downloadlink);
+		this.downloadnames.add(downloadname);
 	}
 	public String getMovieName(){
 		return this.movie_name;
@@ -58,6 +67,9 @@ public class Movie_Info{
 	public ArrayList<String> getDownLoadLinks(){
 		return this.downloadlinks;
 	}
+	public ArrayList<String> getDownLoadNames(){
+		return this.downloadnames;
+	}
 	
 	@Override
 	public String toString(){
@@ -70,9 +82,9 @@ public class Movie_Info{
 		}
 		sb.append("\n");
 		if(downloadlinks.size() != 0){
-			sb.append("movie has down load links: ");
+			sb.append("movie has down loads : ");
 			for(int i = 0; i < downloadlinks.size(); i ++){
-				sb.append("\n	" + downloadlinks.get(i));
+				sb.append("\n	" + downloadnames.get(i) + "	" + downloadlinks.get(i));
 			}
 		}
 		return sb.toString();
@@ -97,18 +109,13 @@ public class Movie_Info{
 			for(int i = 0 ; i < downloadlinks.size(); i ++){
 				downloadlinks.set(i, downloadlinks.get(i).replaceAll("'","''"));
 			}
+			for(int i = 0 ; i < downloadnames.size(); i ++){
+				downloadnames.set(i, downloadnames.get(i).replaceAll("'","''"));
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return this;
-	}
-	
-	public boolean check(){
-		if(movie_name == null || haibao_path == null
-				||names.size() == 0 || downloadlinks.size() == 0){
-			return true;
-		}
-		return false;
 	}
 }
