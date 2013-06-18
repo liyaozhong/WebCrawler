@@ -98,10 +98,10 @@ public class Movie_Info{
 	public Movie_Info convertForMySQL(){
 		try {
 			if(movie_name != null){
-				movie_name.replaceAll("'","''");
+				movie_name = movie_name.replaceAll("'","''");
 			}
 			if(haibao_path != null){
-				haibao_path.replaceAll("'","''");
+				haibao_path = haibao_path.replaceAll("'","''");
 			}
 			for(int i = 0 ; i < names.size(); i ++){
 				names.set(i, names.get(i).replaceAll("'","''"));
