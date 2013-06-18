@@ -204,35 +204,45 @@ public class DyttCrawler extends BaseCrawler{
 				break;
 			case PIANMING_MATCH:	
 				
-				//蛋疼的电影名匹配
-				if(str.startsWith("◎译　　名") || str.startsWith("◎片　　名") || str.startsWith("◎影片原名") || str.startsWith("◎中文译名") ||
-						str.startsWith("英文片名：") || str.startsWith("◎中文　名") || str.startsWith("◎中文片名") || str.startsWith("◎英文片名") ||
-						str.startsWith("◎英文原名") || str.startsWith("◎中文原名")){
-					str = str.substring(6, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎中 文 名") || str.startsWith("◎英 文 名") || str.startsWith("◎译 　　名") || str.startsWith("◎片 　　名") ||
-						str.startsWith("中 文 名:") || str.startsWith("英 文 名:") || str.startsWith("◎中文片名：") || str.startsWith("◎原　　名：") ||
-						str.startsWith("【译　　名】") || str.startsWith("【片　　名】")){
-					str = str.substring(7, str.lastIndexOf("<"));
-				}else if(str.startsWith("◎中  文 名") || str.startsWith("◎英  文 名") || str.startsWith("◎原 片 名：")){
-					str = str.substring(8, str.lastIndexOf("<"));
-				}else if(str.startsWith("片名：")){
-					str = str.substring(4, str.lastIndexOf("<"));
-				}
-				//去除电影名前的“空格”（trim对此种空格无效）
-				while(str.startsWith("　")){
-					str = str.substring(1, str.length());
-				}
-				StringTokenizer st = new StringTokenizer(str, "/");
-				if(st.countTokens() == 0){
-					movie_info.setMovieName(str.trim());
-				}
-				while(st.hasMoreElements()){
-					String tmp = st.nextToken().trim();
-					if(!movie_info.hasName()){
-						movie_info.setMovieName(tmp);
-					}else{
-						movie_info.addName(tmp);
+				try {
+					//蛋疼的电影名匹配
+					if(str.startsWith("◎译　　名") || str.startsWith("◎片　　名") || str.startsWith("◎影片原名") || str.startsWith("◎中文译名") ||
+							str.startsWith("英文片名：") || str.startsWith("◎中文　名") || str.startsWith("◎中文片名") || str.startsWith("◎英文片名") ||
+							str.startsWith("◎英文原名") || str.startsWith("◎中文原名")){
+						//if内为特例处理
+						if(str.contains(":")){
+							str = str.substring(str.indexOf(":") + 1, str.lastIndexOf("<"));
+						}else{
+							str = str.substring(6, str.lastIndexOf("<"));
+						}
+					}else if(str.startsWith("◎中 文 名") || str.startsWith("◎英 文 名") || str.startsWith("◎译 　　名") || str.startsWith("◎片 　　名") ||
+							str.startsWith("中 文 名:") || str.startsWith("英 文 名:") || str.startsWith("◎中文片名：") || str.startsWith("◎原　　名：") ||
+							str.startsWith("【译　　名】") || str.startsWith("【片　　名】")){
+						str = str.substring(7, str.lastIndexOf("<"));
+					}else if(str.startsWith("◎中  文 名") || str.startsWith("◎英  文 名") || str.startsWith("◎原 片 名：")){
+						str = str.substring(8, str.lastIndexOf("<"));
+					}else if(str.startsWith("片名：")){
+						str = str.substring(4, str.lastIndexOf("<"));
 					}
+					//去除电影名前的“空格”（trim对此种空格无效）
+					while(str.startsWith("　")){
+						str = str.substring(1, str.length());
+					}
+					StringTokenizer st = new StringTokenizer(str, "/");
+					if(st.countTokens() == 0){
+						movie_info.setMovieName(str.trim());
+					}
+					while(st.hasMoreElements()){
+						String tmp = st.nextToken().trim();
+						if(!movie_info.hasName()){
+							movie_info.setMovieName(tmp);
+						}else{
+							movie_info.addName(tmp);
+						}
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				break;
 			case XIAZAIMING_MATCH:
