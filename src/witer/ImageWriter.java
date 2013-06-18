@@ -72,13 +72,11 @@ public class ImageWriter {
 					ArrayList<Movie_Info> tmp = new ArrayList<Movie_Info>();
 					synchronized (movie_list) {
 						if(movie_list.size() == 0 && halt){
-							LogUtil.getInstance().write("IamgeWriter halting");
 							System.out.println("------------------------------------------------IamgeWriter halting------------------------------------------------");
 							break;
 						}
 						if(movie_list.size() == 0){
 							try {
-								LogUtil.getInstance().write("IamgeWriter waitting...");
 								System.err.println("IamgeWriter waitting...");
 								movie_list.wait();
 							} catch (InterruptedException e) {
@@ -195,23 +193,25 @@ public class ImageWriter {
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
+			LogUtil.getInstance().write(e.getMessage() + "\nMalformedURLException : " + movie_info.getHaiBaoPath() + "\n");
 			e.printStackTrace();
-			System.err.println(url);
 			return URL_ERROR;
 		}catch (SocketTimeoutException e) {
 			// TODO Auto-generated catch block
 			return TIME_OUT;
 		}catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
+			LogUtil.getInstance().write(e.getMessage() + "\nUnknownHostException : " + url + "\n");
 			e.printStackTrace();
-			System.err.println(url);
 			return UNKOWN_HOST;
 		}catch (IOException e) {
 			// TODO Auto-generated catch block
+			LogUtil.getInstance().write(e.getMessage() + "\nIOException : " + movie_info.getMovieName() + "\n");
 			e.printStackTrace();
 			return WRITE_FAILED;
 		}catch (Exception e) {
 			// TODO Auto-generated catch block
+			LogUtil.getInstance().write(e.getMessage() + "\n");
 			e.printStackTrace();
 			System.err.println(url);
 			return UNKOWN_ERROR;
