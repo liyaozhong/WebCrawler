@@ -174,14 +174,14 @@ public class DyttCrawler extends BaseCrawler{
 				StringTokenizer st = new StringTokenizer(str, "/");
 				if(st.countTokens() == 0){
 					movie_info.setMovieName(str.trim());
-					movie_info.addName(str.trim());
 				}
 				while(st.hasMoreElements()){
 					String tmp = st.nextToken().trim();
 					if(!movie_info.hasName()){
 						movie_info.setMovieName(tmp);
+					}else{
+						movie_info.addName(tmp);
 					}
-					movie_info.addName(tmp);
 				}
 				break;
 			case 2:

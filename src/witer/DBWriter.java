@@ -41,7 +41,7 @@ public class DBWriter {
 			Movie_Info info = movie_list.get(i);
 			ArrayList<String> names = info.getNames();
 			for(int j = 0; j < names.size(); j ++){
-				sql.add("insert into movienames (MOVIE_NAME, MOVIE_OTHER_NAME) values('"+info.getMovieName()+"', '"+names.get(j)+"')");
+				sql.add("replace into movienames set MOVIE_NAME='"+info.getMovieName()+"', MOVIE_OTHER_NAME='"+names.get(j)+"'");
 			}
 		}
 		return sql;
