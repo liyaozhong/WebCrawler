@@ -203,7 +203,7 @@ public class DyttCrawler extends BaseCrawler{
 			}
 		}
 		//部分电影仍旧无法识别电影名，通过title从中提取。
-		if(!movie_info.hasName()){
+		if(n == 1 && !movie_info.hasName()){
 			String title = s.substring(s.indexOf("<title>"), s.indexOf("</title>"));
 			String name = title.substring(title.indexOf("《") + 1, title.indexOf("》"));
 			movie_info.setMovieName(name);
