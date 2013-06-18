@@ -31,20 +31,7 @@ public class M1905Crawler extends BaseCrawler{
 	
 	public M1905Crawler(){
 		movie_src = "M1905";
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2013/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2012/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2011/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2010/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2009/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2008/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2007/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2006/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2005/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2004/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2003/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2002/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2001/o0d0p%d.html");
-		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/year-2000/o0d0p%d.html");
+		CRAWLABLE_URLS.add("http://www.m1905.com/mdb/film/list/o0d0p%d.html");
 	}
 	
 	protected void begin(){
