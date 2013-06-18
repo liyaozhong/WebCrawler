@@ -47,24 +47,40 @@ public class DyttCrawler extends BaseCrawler{
 	 */
 	private String getContent(String surl){
 		StringBuffer sb = new StringBuffer();
+		InputStream is = null;
+		BufferedReader bReader = null;
 		try {
 			URL url = new URL(surl);
 			URLConnection urlconnection = url.openConnection();
 			urlconnection.addRequestProperty("User-Agent", AGENT);
 			urlconnection.setConnectTimeout(TIME_OUT);
-			InputStream is = url.openStream();
-			BufferedReader bReader = new BufferedReader(new InputStreamReader(is, "GBK"));
+			is = url.openStream();
+			bReader = new BufferedReader(new InputStreamReader(is, "GBK"));
 			String rLine = null;
 			while((rLine=bReader.readLine())!=null){
 				sb.append(rLine);
 				sb.append("/r/n");
 			}
 		}catch (IOException e) {
+			LogUtil.getInstance().write(this.getClass().getName() + " : " + e.getMessage());
+			return null;
+		}finally{
+			try {
+				if(is != null){
+					is.close();
+				}
+				if(bReader != null){
+					bReader.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return sb.toString();
 	}
 	
-	
+	private final static String MAX_PAGE_PATTERN = "共\\d+页/\\d+条记录";
 	/**
 	 * 获取当前最大页
 	 * @return MAX_PAGE
@@ -72,10 +88,23 @@ public class DyttCrawler extends BaseCrawler{
 	protected boolean getMaxPage(){
 		
 		for(int i = 0; i < CRAWLABLE_URLS.size() ; i ++){
+			int retry_counter = 0;
 			String url = CRAWLABLE_URLS.get(i);
 			String content = getContent(String.format(url, 1));
-			String regex = "共\\d+页/\\d+条记录";
-			Pattern pt = Pattern.compile(regex);
+			while(content == null){
+				if(++retry_counter < 3){
+					LogUtil.getInstance().write(this.getClass().getName() + " : getMaxPage Method getContent return null . retrying time : " + retry_counter);
+					content = getContent(String.format(url, 1));
+				}else{
+					break;
+				}
+			}
+			if(content == null){
+				LogUtil.getInstance().write(this.getClass().getName() + " : getMaxPage Method getContent return null \n" + String.format(url, 1));
+				CRAWLABLE_MAX_PAGE.add(i, 0);
+				continue;
+			}
+			Pattern pt = Pattern.compile(MAX_PAGE_PATTERN);
 			Matcher mt = pt.matcher(content);
 			if(mt.find()){
 				String str = mt.group();
@@ -85,9 +114,13 @@ public class DyttCrawler extends BaseCrawler{
 					CRAWLABLE_MAX_PAGE.add(i, last_page);
 					System.out.println("last page found: " + last_page);
 				} catch (NumberFormatException e) {
-					LogUtil.getInstance().write(this.getClass().getName() + "	[error] getting max page at URL : " + url);
+					LogUtil.getInstance().write(e.getMessage() + "\nNumberFormatException : " + str + "\n");
+					CRAWLABLE_MAX_PAGE.add(i, 0);
 					e.printStackTrace();
 				}
+			}else{
+				LogUtil.getInstance().write(this.getClass().getName() + " : getMaxPage Method pattern not match");
+				CRAWLABLE_MAX_PAGE.add(i, 0);
 			}
 		}
 		return true;
@@ -109,6 +142,10 @@ public class DyttCrawler extends BaseCrawler{
 	 */
 	protected int crawlMovies(int id, String sUrl){
 		String s = getContent(sUrl);
+		if(s == null){
+			LogUtil.getInstance().write(this.getClass().getName() + " : crawlMovies Method getContent return null \n" + sUrl);
+			return 0;
+		}
 		int movie_counter = 0;
 		ArrayList<Movie_Info> movie_list = new ArrayList<Movie_Info>();
 		Pattern pt = Pattern.compile(MOVIE_URL_PATTERN);
@@ -121,6 +158,10 @@ public class DyttCrawler extends BaseCrawler{
 				continue;
 			}
 			String content = getContent(str);
+			if(content == null){
+				LogUtil.getInstance().write(this.getClass().getName() + " : crawlMovies Method getContent return null \n" + sUrl);
+				continue;
+			}
 			for(int i = 0; i < MOVIE_PATTERNS.length; i ++){
 				parsePattern(movie_info, content, i);
 			}
