@@ -126,7 +126,7 @@ public class DyttCrawler extends BaseCrawler{
 			}
 			movie_counter ++;
 			if(movie_info.getMovieName() != null){
-//				ImageWriter.getInstance().addMovieList(movie_info.clone());
+				ImageWriter.getInstance().addMovieList(movie_info.clone());
 			}
 			movie_list.add(movie_info);
 		}
