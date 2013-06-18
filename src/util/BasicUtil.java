@@ -21,6 +21,15 @@ public class BasicUtil {
 		if(str.contains("&middot;")){
 			str = str.replaceAll("&middot;", ".");
 		}
+		if(str.contains("&rsquo;")){
+			str = str.replaceAll("&rsquo;", "’");
+		}
+		if(str.contains("&mdash;")){
+			str = str.replaceAll("&mdash;", "—");
+		}
+		if(str.contains("&ndash;")){
+			str = str.replaceAll("&ndash;", "–");
+		}
 		return str;
 	}
 	

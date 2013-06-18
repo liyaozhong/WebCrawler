@@ -93,9 +93,10 @@ public class DyttCrawler extends BaseCrawler{
 		return true;
 	}
 	
+	
 	private final static String MOVIE_URL_PATTERN = "<a href=\"/html/gndy/[a-zA-Z]+/[0-9]{1,}/[0-9]{1,}.html\"";
 	private final static String HAIBAO_PATTERN = "<img[^<]*src=\"http.*?(jpg|gif|JPG|GIF)\"";
-	private final static String PIANMING_PATTERN = "(◎译　　名|◎片　　名|◎中 文 名|◎英 文 名|◎译 　　名|◎片 　　名)[^<]*<br />";
+	private final static String PIANMING_PATTERN = "(◎译　　名|◎片　　名|◎中 文 名|◎英 文 名|◎译 　　名|◎片 　　名|◎中  文 名|◎英  文 名|◎影片原名|◎中文译名)[^<]*<br />";
 	private final static String XIAZAIMING_PATTERN = "(rmvb|avi|mp4|mkv|RMVB|AVI|PM4|MKV)\">[^<]*(rmvb|avi|mp4|mkv|RMVB|AVI|PM4|MKV)";
 	private final static String[] MOVIE_PATTERNS = {HAIBAO_PATTERN, PIANMING_PATTERN, XIAZAIMING_PATTERN};
 
@@ -154,7 +155,8 @@ public class DyttCrawler extends BaseCrawler{
 					movie_info.setHaiBaoPath(str);
 				}
 				break;
-			case 1:
+			case 1:	
+				//蛋疼的电影名匹配
 				if(str.startsWith("◎译　　名")){
 					str = str.substring(6, str.lastIndexOf("<"));
 				}else if(str.startsWith("◎片　　名")){
@@ -167,7 +169,16 @@ public class DyttCrawler extends BaseCrawler{
 					str = str.substring(7, str.lastIndexOf("<"));
 				}else if(str.startsWith("◎片 　　名")){
 					str = str.substring(7, str.lastIndexOf("<"));
+				}else if(str.startsWith("◎中  文 名")){
+					str = str.substring(8, str.lastIndexOf("<"));
+				}else if(str.startsWith("◎英  文 名")){
+					str = str.substring(8, str.lastIndexOf("<"));
+				}else if(str.startsWith("◎影片原名")){
+					str = str.substring(6, str.lastIndexOf("<"));
+				}else if(str.startsWith("◎中文译名")){
+					str = str.substring(6, str.lastIndexOf("<"));
 				}
+				//去除电影名前的“空格”（trim对此种空格无效）
 				while(str.startsWith("　")){
 					str = str.substring(1, str.length());
 				}
@@ -190,6 +201,12 @@ public class DyttCrawler extends BaseCrawler{
 				break;
 			default:break;
 			}
+		}
+		//部分电影仍旧无法识别电影名，通过title从中提取。
+		if(!movie_info.hasName()){
+			String title = s.substring(s.indexOf("<title>"), s.indexOf("</title>"));
+			String name = title.substring(title.indexOf("《") + 1, title.indexOf("》"));
+			movie_info.setMovieName(name);
 		}
 	}
 	
