@@ -119,8 +119,9 @@ public class YyetsCrawler extends BaseCrawler{
 					String tmp = st.nextToken();
 					if(!info.hasName()){
 						info.setMovieName(tmp.trim());
+					}else{
+						info.addName(tmp.trim());
 					}
-					info.addName(tmp.trim());
 				}
 				if(info.getMovieName() != null){
 					ImageWriter.getInstance().addMovieList(info);
@@ -185,7 +186,7 @@ public class YyetsCrawler extends BaseCrawler{
 							}
 
 						}
-						info.addName(BasicUtil.formatString(down_load_name));
+//						info.addName(BasicUtil.formatString(down_load_name));
 						//RegexUtil.getMovieName(BasicUtil.formatString(down_load_name));
 						info.addDownLoadLinks(down_load_links);
 					}
