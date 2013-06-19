@@ -14,9 +14,9 @@ import java.util.regex.Pattern;
 public class RegexUtil {
 	
 	/**
-	 * 中文名和英文名共同显示,通过S01E01或S01E01E02或S01或EP01或1X01或E01或Season1或SEASON1方式表示第几集
+	 * 中文名和英文名共同显示,通过S01E01或S01E01E02或S01E01_02或S01或EP01或1X01或E01或Season1或SEASON1方式表示第几集
 	 */
-	private static final String regex0 = "([^\\. \\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+[^\\. ]*)(\\.| )(.*)(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?|((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(\\.|-| |\\[).*?(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex0 = "([^\\. \\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+[^\\. ]*)(\\.| )(.*)(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?|((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?(E|e)\\d\\d?_\\d\\d?|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(\\.|-| |\\[).*?(mp4|avi|rmvb|mkv|mpg)?";
 	private static final String regex0_name = "([^\\. \\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]+[^\\. ]*)(\\.| )";
 	
 	/**
@@ -26,12 +26,12 @@ public class RegexUtil {
 	private static final String regex1_name = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?)";
 	
 	/**
-	 * 只显示英文名,通过S01E01或S01E01E02或S01或EP01或1X01或E01方式表示第几集
+	 * 只显示英文名,通过S01E01或S01E01E02或S01E01_02或S01或EP01或1X01或E01方式表示第几集
 	 * 特例：aaf-ub.s01e06r，增加(R|r)?
 	 * 特例：The Guardian.S01E17-22，增加-?
 	 */
-	private static final String regex2 = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(R|r)?-?(\\.|-| |\\)).*(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex2_name = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(R|r)?-?";
+	private static final String regex2 = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?(E|e)\\d\\d?_\\d\\d?|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(R|r)?-?(\\.|-| |\\)).*(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex2_name = "^([a-zA-Z0-9\\._ --'～~\\[\\]\\(\\)]*)(\\.|-| |\\()(((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?(E|e)\\d\\d?_\\d\\d?|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?)(R|r)?-?";
 		
 	/**
 	 * 电影 特殊类型：[垃圾文字]英文名字.720p/年代
@@ -228,7 +228,7 @@ public class RegexUtil {
 			e.printStackTrace();
 		}
 		try {
-			conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/Yyets", "root", "liyaozhong");
+			conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/Dytt", "root", "liyaozhong");
 			stmt = conn.createStatement();
 			String sql = "select * from moviedownloadlinks order by 'MOVIE_NAME' ASC";
 			ResultSet result = stmt.executeQuery(sql);
