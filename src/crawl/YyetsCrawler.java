@@ -11,7 +11,9 @@ import util.LogUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 
 import witer.DBWriter;
 import witer.ImageWriter;
@@ -123,28 +125,10 @@ public class YyetsCrawler extends BaseCrawler{
 				String href = e1.attr("href");
 				String src = e1.childNode(0).attr("src");
 				src = src.replace("m_", "");
-				Node e2 = movie_mode.childNode(3).childNode(1).childNode(1).childNode(1).childNode(1).childNode(0);
-				String movie_name_node = e2.toString();
-				String movie_name = movie_name_node.substring(movie_name_node.indexOf("《") + 1, movie_name_node.lastIndexOf("》"));
 				
 				Movie_Info info = new Movie_Info();
 				info.setHaiBaoPath(BasicUtil.formatString(src));
-				movie_name =  BasicUtil.formatString(movie_name);
-				StringTokenizer st = new StringTokenizer(movie_name, "/");
-				if(st.countTokens() == 0){
-					info.setMovieName(movie_name.trim());
-				}
-				while(st.hasMoreElements()){
-					String tmp = st.nextToken();
-					if(!info.hasName()){
-						info.setMovieName(tmp.trim());
-					}else{
-						info.addName(tmp.trim());
-					}
-				}
-				if(info.getMovieName() != null){
-					ImageWriter.getInstance().addMovieList(info);
-				}
+
 				//get movie
 				try {
 					doc = Jsoup.connect(href)
@@ -156,6 +140,42 @@ public class YyetsCrawler extends BaseCrawler{
 				if(doc == null){
 					LogUtil.getInstance().write(this.getClass().getName() + " : crawlMovies Method getContent return null \n" + href);
 					continue;
+				}
+				Elements head = doc.head().select("meta");
+				for(Element node : head){
+					String att = node.attr("name");
+					if(att != null && att.equals("keywords")){
+						att = node.attr("content");
+						int sg = att.indexOf(",");
+						if(sg != -1){
+							info.setMovieName(att.substring(0, sg));
+							int sg2 = att.indexOf(",", sg + 1);
+							if(sg2 != -1){
+								String other_name = att.substring(sg + 1, sg2);
+								boolean split = false;
+								if(other_name.contains("/")){
+									StringTokenizer st1 = new StringTokenizer(other_name, "/");
+									while(st1.hasMoreElements()){
+										info.addName(st1.nextToken().trim());
+									}
+									split = true;
+								}
+								if(other_name.contains("&")){
+									StringTokenizer st2 = new StringTokenizer(other_name, "&");
+									while(st2.hasMoreElements()){
+										info.addName(st2.nextToken().trim());
+									}
+									split = true;
+								}
+								if(!split){
+									info.addName(other_name);
+								}
+							}
+						}
+					}
+				}
+				if(info.getMovieName() != null){
+					ImageWriter.getInstance().addMovieList(info);
 				}
 				if(doc.getElementById("tabs") == null){
 					continue;
