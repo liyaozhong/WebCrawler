@@ -157,9 +157,9 @@ public class DyttCrawler extends BaseCrawler{
 			String str = mt.group();
 			str =ROOT_URL + str.substring(10, str.length() - 1);
 			Movie_Info movie_info = new Movie_Info();
-			if(DBWriter.getInstance().ifCrawled(str)){
-				continue;
-			}
+//			if(DBWriter.getInstance().ifCrawled(str)){
+//				continue;
+//			}
 			String content = getContent(str);
 			if(content == null){
 				LogUtil.getInstance().write(this.getClass().getName() + " : crawlMovies Method getContent return null \n" + sUrl);
