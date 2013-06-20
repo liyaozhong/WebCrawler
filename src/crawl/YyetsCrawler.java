@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import model.Movie_Info;
 import util.BasicUtil;
+import util.ConstantUtil;
 import util.LogUtil;
 
 import org.jsoup.Jsoup;
@@ -46,7 +47,7 @@ public class YyetsCrawler extends BaseCrawler{
 			String url = String.format(CRAWLABLE_URLS.get(i), 1);
 			try {
 				doc = Jsoup.connect(url)
-						.userAgent(AGENT).timeout(TIME_OUT * 2).post();
+						.userAgent(ConstantUtil.AGENT).timeout(ConstantUtil.TIME_OUT * 2).post();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				LogUtil.getInstance().write(e.getMessage() + "\nIOException : " + url + "\n");
@@ -58,7 +59,7 @@ public class YyetsCrawler extends BaseCrawler{
 					LogUtil.getInstance().write(this.getClass().getName() + " : getMaxPage Method getContent return null . retrying time : " + retry_counter);
 					try {
 						doc = Jsoup.connect(url)
-								.userAgent(AGENT).timeout(TIME_OUT * 2).post();
+								.userAgent(ConstantUtil.AGENT).timeout(ConstantUtil.TIME_OUT * 2).post();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						LogUtil.getInstance().write(e.getMessage() + "\nIOException : " + url + "\n");
@@ -103,7 +104,7 @@ public class YyetsCrawler extends BaseCrawler{
 		Document doc = null;
 		try {
 			doc = Jsoup.connect(sUrl)
-					.userAgent(AGENT).timeout(TIME_OUT).post();
+					.userAgent(ConstantUtil.AGENT).timeout(ConstantUtil.TIME_OUT).post();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -132,7 +133,7 @@ public class YyetsCrawler extends BaseCrawler{
 				//get movie
 				try {
 					doc = Jsoup.connect(href)
-							.userAgent(AGENT).timeout(TIME_OUT).get();
+							.userAgent(ConstantUtil.AGENT).timeout(ConstantUtil.TIME_OUT).get();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -12,6 +12,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+import util.ConstantUtil;
 import util.LogUtil;
 import witer.DBWriter;
 import witer.ImageWriter;
@@ -48,7 +49,7 @@ public class M1905Crawler extends BaseCrawler{
 		Document doc = null;
 		try {
 			doc = Jsoup.connect(sUrl)
-					.userAgent(AGENT).timeout(TIME_OUT).post();
+					.userAgent(ConstantUtil.AGENT).timeout(ConstantUtil.TIME_OUT).post();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,7 +83,7 @@ public class M1905Crawler extends BaseCrawler{
 					//获取影片译名
 					try {
 						doc = Jsoup.connect(href)
-								.userAgent(AGENT).timeout(TIME_OUT).post();
+								.userAgent(ConstantUtil.AGENT).timeout(ConstantUtil.TIME_OUT).post();
 						Node other_name_node = doc.getElementsByClass("laMovName").first().child(1).child(0).childNode(0);
 						if(other_name_node.childNodeSize() != 0){
 							String other_name = other_name_node.childNode(0).toString();
@@ -120,7 +121,7 @@ public class M1905Crawler extends BaseCrawler{
 			String url = String.format(CRAWLABLE_URLS.get(i), 1);
 			try {
 				doc = Jsoup.connect(url)
-						.userAgent(AGENT).timeout(TIME_OUT * 2).post();
+						.userAgent(ConstantUtil.AGENT).timeout(ConstantUtil.TIME_OUT * 2).post();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -131,7 +132,7 @@ public class M1905Crawler extends BaseCrawler{
 					LogUtil.getInstance().write(this.getClass().getName() + " : getMaxPage Method getContent return null . retrying time : " + retry_counter);
 					try {
 						doc = Jsoup.connect(url)
-								.userAgent(AGENT).timeout(TIME_OUT * 2).post();
+								.userAgent(ConstantUtil.AGENT).timeout(ConstantUtil.TIME_OUT * 2).post();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						LogUtil.getInstance().write(e.getMessage() + "\nIOException : " + url + "\n");

@@ -2,6 +2,8 @@ package model;
 
 import java.util.ArrayList;
 
+import util.RegexUtil;
+
 public class Movie_Info{
 	private String movie_name = null;
 	private String haibao_path = null;
@@ -99,6 +101,7 @@ public class Movie_Info{
 		try {
 			if(movie_name != null){
 				movie_name = movie_name.replaceAll("'","''");
+				movie_name = RegexUtil.formatMovieName(movie_name);
 			}
 			if(haibao_path != null){
 				haibao_path = haibao_path.replaceAll("'","''");
@@ -110,7 +113,7 @@ public class Movie_Info{
 				downloadlinks.set(i, downloadlinks.get(i).replaceAll("'","''"));
 			}
 			for(int i = 0 ; i < downloadnames.size(); i ++){
-				downloadnames.set(i, downloadnames.get(i).replaceAll("'","''"));
+				downloadnames.set(i, RegexUtil.formatMovieName(downloadnames.get(i).replaceAll("'","''")));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

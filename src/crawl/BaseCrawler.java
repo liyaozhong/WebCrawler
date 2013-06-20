@@ -6,15 +6,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import util.ConstantUtil;
 import util.LogUtil;
 import witer.DBWriter;
 import witer.ImageWriter;
 
 public abstract class BaseCrawler {
 
-	protected final static int TIME_OUT = 5000;
-	protected final static String AGENT = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)";
-	protected final static int THREAD_NUM = 10;
 	protected static ArrayList<String> CRAWLABLE_URLS = new ArrayList<String>();
 	protected static ArrayList<Integer> CRAWLABLE_MAX_PAGE = new ArrayList<Integer>();
 	protected static String movie_src;
@@ -49,7 +47,7 @@ public abstract class BaseCrawler {
 	
 	protected void begin(){
 		//文件目录初始化
-		File f = new File("image/" + movie_src);
+		File f = new File(ConstantUtil.IMAGE_ROOT_DIR + movie_src);
 		f.mkdir();
 		//获取max page
 		if(!getMaxPage()){
@@ -60,9 +58,9 @@ public abstract class BaseCrawler {
 		DBWriter.getInstance().start();
 		ImageWriter.getInstance().setMovieSrc(movie_src);
 		ImageWriter.getInstance().start();
-		ExecutorService exe = Executors.newFixedThreadPool(THREAD_NUM);
-		CountDownLatch cdl = new CountDownLatch(THREAD_NUM);
-		for(int thread_id = 1; thread_id <= THREAD_NUM; thread_id ++){
+		ExecutorService exe = Executors.newFixedThreadPool(ConstantUtil.THREAD_NUM);
+		CountDownLatch cdl = new CountDownLatch(ConstantUtil.THREAD_NUM);
+		for(int thread_id = 1; thread_id <= ConstantUtil.THREAD_NUM; thread_id ++){
 			exe.execute(new MoiveCrawler(cdl, thread_id));
 		}
 		try {

@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import util.BasicUtil;
+import util.ConstantUtil;
 import util.LogUtil;
 
 import model.Movie_Info;
@@ -125,7 +126,7 @@ public class ImageWriter {
 						//超时的海报写入文件,备用
 						if(retry == GET_IMAGE_FAILED){
 							try {
-								FileWriter writer = new FileWriter("image/retrylist.txt", true);
+								FileWriter writer = new FileWriter(ConstantUtil.RETRYLIST_PATH, true);
 								writer.write(tmp.get(i).getMovieName() + "\r\n" + tmp.get(i).getHaiBaoPath() + "\r\n");
 								writer.close();
 							} catch (IOException e) {

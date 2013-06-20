@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import model.Movie_Info;
 
 import util.BasicUtil;
+import util.ConstantUtil;
 import util.LogUtil;
 import witer.DBWriter;
 import witer.ImageWriter;
@@ -52,8 +53,8 @@ public class DyttCrawler extends BaseCrawler{
 		try {
 			URL url = new URL(surl);
 			URLConnection urlconnection = url.openConnection();
-			urlconnection.addRequestProperty("User-Agent", AGENT);
-			urlconnection.setConnectTimeout(TIME_OUT);
+			urlconnection.addRequestProperty("User-Agent", ConstantUtil.AGENT);
+			urlconnection.setConnectTimeout(ConstantUtil.TIME_OUT);
 			is = url.openStream();
 			bReader = new BufferedReader(new InputStreamReader(is, "GBK"));
 			String rLine = null;
