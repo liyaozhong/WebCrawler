@@ -107,13 +107,13 @@ public class Movie_Info{
 				haibao_path = haibao_path.replaceAll("'","''");
 			}
 			for(int i = 0 ; i < names.size(); i ++){
-				names.set(i, names.get(i).replaceAll("'","''"));
+				names.set(i, RegexUtil.formatMovieName(names.get(i).replaceAll("'","''")));
 			}
 			for(int i = 0 ; i < downloadlinks.size(); i ++){
 				downloadlinks.set(i, downloadlinks.get(i).replaceAll("'","''"));
 			}
 			for(int i = 0 ; i < downloadnames.size(); i ++){
-				downloadnames.set(i, RegexUtil.formatMovieName(downloadnames.get(i).replaceAll("'","''")));
+				downloadnames.set(i, downloadnames.get(i).replaceAll("'","''"));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
