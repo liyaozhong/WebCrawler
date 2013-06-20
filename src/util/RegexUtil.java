@@ -1,5 +1,6 @@
 package util;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,33 +37,33 @@ public class RegexUtil {
 	/**
 	 * 电影 特殊类型：[垃圾文字]英文名字.720p/年代
 	 */
-	private static final String regex3 = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)?[a-zA-Z\\d\\.\\ ]+\\.\\d{3,4}p?\\..*?(mp4|avi|rmvb|mkv|mpg)";
-	private static final String regex3_name = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)?[a-zA-Z\\d\\.\\ ]+\\.\\d{3,4}p?";
+	private static final String regex3 = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)*[a-zA-Z\\d\\.\\ ]+\\.\\d{3,4}p?\\..*?(mp4|avi|rmvb|mkv|mpg)";
+	private static final String regex3_name = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)*[a-zA-Z\\d\\.\\ ]+\\.\\d{3,4}p?";
 	
 	/**
 	 * 电影 特殊类型：[垃圾文字]中文名字(或英文名字，不包含'.')DVD/HD/BD
 	 */
-	private static final String regex4 = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)?[^\\[\\]\\.]+(DVD|HD|BD|hd|bd).*?(mp4|avi|rmvb|mkv|mpg)";
-	private static final String regex4_name = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)?[^\\[\\]\\.]+(DVD|HD|BD|hd|bd)";
+	private static final String regex4 = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)*[^\\[\\]\\.]+(DVD|HD|BD|hd|bd).*?(mp4|avi|rmvb|mkv|mpg)";
+	private static final String regex4_name = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)*[^\\[\\]\\.]+(DVD|HD|BD|hd|bd)";
 	
 	/**
 	 * 电影 特殊类型：[垃圾文字]中文名字(截取第一个'.'之前)
 	 */
-	private static final String regex5 = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)?[^\\[\\]\\.]+(\\.)?.*?(mp4|avi|rmvb|mkv|mpg)";
-	private static final String regex5_name = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)?[^\\[\\]\\.]+";
+	private static final String regex5 = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)*[^\\[\\]\\.]+(\\.)?.*?(mp4|avi|rmvb|mkv|mpg)";
+	private static final String regex5_name = "^(\\[|【)?[^\\[\\]【】]+(\\]|】)( |\\.|-)*[^\\[\\]\\.]+";
 	
 	
 	/**
-	 * 通过中括号区分字段的
+	 * 通过中括号区分字段的,包含S01E01等信息
 	 */
-	private static final String regex6 = "(\\[([^\\[\\]]+)\\])(\\[((S|s)\\d\\d?(E|e)\\d\\d?).*\\]).*\\.(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex6 = "(\\[([^\\[\\]]+)\\])(\\[(Season\\d\\d?|season\\d\\d?|SEASON\\d\\d?|((S|s)\\d\\d?((E|e)\\d\\d?){1,2})|(S|s)\\d\\d?(E|e)\\d\\d?_\\d\\d?|(S|s)\\d\\d?|(E|e)(P|p)\\d\\d?|(E|e)\\d\\d?|\\d\\d?x\\d\\d?).*\\]).*\\.(mp4|avi|rmvb|mkv|mpg)?";
 	private static final String regex6_name = "(\\[([^\\[\\]]+)\\])";
 	
 	/**
-	 * 电影类，显示中文名字和英文名字,由[]连接(要求不止一个[])
+	 * 电影类，显示中文名字和英文名字,由[]连接(要求不止一个[],[]中不含'.')
 	 */
-	private static final String regex7 = "^\\[([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\. ]*)\\] *\\[(.*)(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex7_name = "^\\[([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\. ]*)\\] *\\";
+	private static final String regex7 = "^\\[([^\\.\\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.\\[\\]]*)\\] *\\[(.*?)(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex7_name = "^\\[([^\\.\\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.\\[\\]]*)\\] *\\[";
 	
 	/**
 	 * 电影 特殊类型：先英文后中文 +　HR-HDTV
@@ -74,20 +75,20 @@ public class RegexUtil {
 	/**
 	 * 电影类，显示中文名字和英文名字,由空格或_连接
 	 */
-	private static final String regex9 = "^([^\\._ ]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\._ ]*)( |_)(.*)(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex9_name = "^([^\\._ ]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\._ ]*)( |_)";
+	private static final String regex9 = "^([^\\._ \\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\._ \\[\\]]*)( |_)(.*?)(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex9_name = "^([^\\._ \\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\._ \\[\\]]*)( |_)";
 	
 	/**
 	 * 电影类，显示中文名字和英文名字,由.连接
 	 */
-	private static final String regex10 = "^([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.]*)\\.(.*)(mp4|avi|rmvb|mkv|mpg)?";
-	private static final String regex10_name = "^([^\\.]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.]*)\\.";
+	private static final String regex10 = "^([^\\.\\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.\\[\\]]*)\\.(.*?)(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex10_name = "^([^\\.\\[\\]]*[^a-zA-Z0-9\\._ --'～~\\[\\]]+[^\\.\\[\\]]*)\\.";
 	
 	/**
 	 * 匹配到第一个表示年份字段之前的部分
 	 * 包括：用空格和.进行分割
 	 */
-	private static final String regex11 = "^.*?(\\.| )\\d{4}(\\.| ).*(mp4|avi|rmvb|mkv|mpg)?";
+	private static final String regex11 = "^.*?(\\.| )\\d{4}(\\.| ).*?(mp4|avi|rmvb|mkv|mpg)?";
 	private static final String regex11_name = "^.*?(\\.| )\\d{4}(\\.| )";
 	
 	/**
@@ -112,8 +113,7 @@ public class RegexUtil {
 												regex12_name, regex13_name};
 	
 	
-	public static void getMovieName(String down_load_name){
-		boolean match = false;
+	public static String getMovieName(String down_load_name){
 		for(int i = 0 ; i < regex.length; i ++){
 			Pattern pt = Pattern.compile(regex[i]);
 			Matcher mt = pt.matcher(down_load_name);
@@ -166,10 +166,6 @@ public class RegexUtil {
 						str2 = str2.substring(1, str2.indexOf("]") - 1);
 						break;
 					case 1: case 2:
-						if(str2.contains("-")){
-							str2 = str2.substring(0, str2.indexOf("-")).trim();
-							break;
-						}
 						if(str2.lastIndexOf(".") == -1){
 							if(str2.lastIndexOf(" ") == -1){
 								break;
@@ -198,25 +194,81 @@ public class RegexUtil {
 					default :
 						break;
 					}
-					System.out.print("match regex " + i + " : " + str2);
-					System.out.println("__________" + down_load_name);
+					return str2;
 				}
 				else{
-					System.out.println("no name__________" + down_load_name);
+					return null;
 				}
-				match = true;
-				break;
 			}
 		}
-		if(!match){
-			System.out.println("		" + down_load_name);
-		}
+		return null;
 	}
 	
 	
 	/**
-	 * 问题测试:
+	 * 去除括号
 	 */
+	private static final String fromat_regex0_match = "^[^\\(\\)（）]*";
+	/**
+	 * 匹配前置第几集
+	 */
+	private static final String fromat_regex1_match = "^(第.*?集)(:|：)";
+	/**
+	 * 匹配结尾
+	 */
+	private static final String format_regex2_match = "-?(第.*?集|卷.|国语|(c|C)(d|D)\\d|\\d+分钟加长版|TC抢先版|R5中字|R5中英双字|加长版|导演剪辑版|电影版|中英双字|特别加长版|(s|S)\\d\\d?| vol)$";
+	/**
+	 * 匹配前置中括号,中括号内容无用
+	 */
+	private static final String format_regex3_match = "^(\\[|\\【)(预告片)(\\]|\\】)";
+	/**
+	 * 匹配前置中括号,中括号内容为电影名
+	 */
+	private static final String format_regex4_match = "^(\\[|\\【)[^\\]\\】]+(\\]|\\】)";
+	/**
+	 * 匹配英文名.年代.中文名(截取英文部分)
+	 */
+	private static final String format_regex5_match = "^[a-zA-Z0-9\\.]+\\.\\d{4}\\.";
+	
+	private static final String[] fomat_regex_match = {fromat_regex0_match, fromat_regex1_match, format_regex2_match, format_regex3_match, format_regex4_match,
+														format_regex5_match};
+
+	public static String formatMovieName(String movie_name){
+		for(int i = 0 ; i < fomat_regex_match.length; i ++){
+			Pattern pt = Pattern.compile(fomat_regex_match[i]);
+			Matcher mt = pt.matcher(movie_name);
+			if(mt.find()){
+				switch (i){
+				case 0:
+					movie_name = mt.group();
+					break;
+				case 1:
+					movie_name = movie_name.substring(mt.group().length());
+					break;
+				case 2:
+					movie_name = movie_name.substring(0, movie_name.length() - mt.group().length());
+					break;
+				case 3:
+					movie_name = movie_name.substring(mt.group().length());
+					break;
+				case 4:
+					movie_name = mt.group();
+					movie_name = movie_name.substring(1, movie_name.length() - 1);
+					break;
+				case 5:
+					movie_name = mt.group();
+					movie_name = movie_name.substring(0, movie_name.length() - 6);
+					break;
+				}
+			}
+		}
+		
+		movie_name = movie_name.replace("_", " ");
+		movie_name = movie_name.replace("-", " ");
+		movie_name = movie_name.replace(".", " ");
+		return movie_name.trim();
+	}
+	
 	public static void main(String args[]){
 		
 		Statement stmt = null;
@@ -228,7 +280,7 @@ public class RegexUtil {
 			e.printStackTrace();
 		}
 		try {
-			conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/Dytt", "root", "liyaozhong");
+			conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/Yyets", "root", "liyaozhong");
 			stmt = conn.createStatement();
 			String sql = "select * from moviedownloadlinks order by 'MOVIE_NAME' ASC";
 			ResultSet result = stmt.executeQuery(sql);
@@ -236,8 +288,11 @@ public class RegexUtil {
 			int counter = 0;
 			while(result.next()){
 				String downloadname = result.getString(3);
-				getMovieName(downloadname);
-				if(counter < 20){
+				String movie_name = getMovieName(downloadname);
+				System.out.println(movie_name + "		" + downloadname);
+				if(movie_name != null)
+					System.out.println(formatMovieName("======" + movie_name));
+				if(counter < 10){
 					counter ++;
 				}else{
 					System.out.println("====================================================");
