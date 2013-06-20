@@ -185,7 +185,7 @@ public class ImageWriter {
 			        outstream.write(buffer, 0, len); 
 			    } 
 				 
-			    File file = new File("image/" + movie_src + "/" + BasicUtil.getMD5(movie_info.getMovieName().getBytes()) + ".jpg");
+			    File file = new File(ConstantUtil.IMAGE_ROOT_DIR + movie_src + "/" + BasicUtil.getMD5(movie_info.getMovieName().getBytes()) + ".jpg");
 				if(file.exists()){
 					return FILE_EXIST;
 				}
