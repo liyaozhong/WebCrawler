@@ -102,7 +102,6 @@ public class ImageWriter {
 							case WRITE_OK:
 								retry = GET_IMAGE_DONE;
 								info.setHaiBaoPath(tmp_image_path);
-								info.setHaiBaoSize(tmp_image_size);
 								DBWriter.getInstance().writeMovieInfo(info);
 								break;
 							case TIME_OUT:
@@ -167,7 +166,6 @@ public class ImageWriter {
 	}
 	
 	private String tmp_image_path = null;
-	private long tmp_image_size = 0;
 	
 	private final static int UNKOWN_ERROR = -1;
 	private final static int WRITE_OK = 0;
@@ -186,7 +184,6 @@ public class ImageWriter {
 		InputStream inputStream = null;
 		ByteArrayOutputStream outstream = null;
 		FileOutputStream fileoutStream = null;
-		tmp_image_size = 0;
 		try {
 			url = new URL(movie_info.getHaiBaoPath());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
@@ -194,19 +191,20 @@ public class ImageWriter {
 			conn.setConnectTimeout(6 * 1000);
 			conn.setReadTimeout(6 * 1000);
 			if (conn.getResponseCode() == 200) { 
-				inputStream = conn.getInputStream(); 
-			    outstream = new ByteArrayOutputStream(1024 * 10); 
-			    byte[] buffer = new byte[1024 * 10];
+				inputStream = conn.getInputStream();
+				byte[] buffer = new byte[1024 * 10];
+			    outstream = new ByteArrayOutputStream(buffer.length); 
+			    
 			    int len = -1; 
 			    while ((len = inputStream.read(buffer)) != -1) { 
 			        outstream.write(buffer, 0, len); 
 			    }  
-			    tmp_image_size = outstream.size();
 			    tmp_image_path = ConstantUtil.IMAGE_ROOT_DIR + movie_src + "/" + BasicUtil.getMD5(movie_info.getMovieName().getBytes()) + ".jpg";
 			    File file = new File(tmp_image_path);
-				if(file.exists() && file.length() > tmp_image_size){
+				if(file.exists() && file.length() > outstream.size()){
 					return FILE_EXIST;
 				}
+				movie_info.setHaiBaoSize(outstream.size());
 			    fileoutStream = new FileOutputStream(file);
 			    fileoutStream.write(outstream.toByteArray()); 
 			}
