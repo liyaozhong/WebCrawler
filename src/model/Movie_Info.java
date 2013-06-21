@@ -14,6 +14,7 @@ public class Movie_Info{
 	
 	public Movie_Info(){}
 	public Movie_Info(String name, String path){
+		name = RegexUtil.formatMovieName(name);
 		this.movie_name = name;
 		this.haibao_path = path;
 		this.names.add(name);
@@ -33,6 +34,7 @@ public class Movie_Info{
 		return this.haibao_path != null;
 	}
 	public void setMovieName(String movie_name){
+		movie_name = RegexUtil.formatMovieName(movie_name);
 		this.movie_name = movie_name;
 		this.names.add(movie_name);
 	}
@@ -40,6 +42,9 @@ public class Movie_Info{
 		this.haibao_path = haibao_path;
 	}
 	public void setNames(ArrayList<String> names){
+		for(int i = 0 ; i < names.size(); i ++){
+			names.set(i, RegexUtil.formatMovieName(names.get(i)));
+		}
 		this.names = names;
 	}
 	public void setHaiBaoSize(long size){
@@ -52,6 +57,7 @@ public class Movie_Info{
 //		this.downloadnames = downloadnames;
 //	}
 	public void addName(String name){
+		name = RegexUtil.formatMovieName(name);
 		this.names.add(name);
 	}
 	public void addDownLoadLinks(ArrayList<String> downloadlinks, String downloadname){
@@ -83,11 +89,6 @@ public class Movie_Info{
 		return this.downloadnames;
 	}
 	
-	public Movie_Info changeMovieName(String movie_name){
-		this.movie_name = movie_name;
-		return this;
-	}
-	
 	@Override
 	public String toString(){
 		StringBuffer sb = new StringBuffer("movie name: " + movie_name + "\nhaibao path: " + haibao_path + "\nhaibai size : " + haibao_size);
@@ -116,13 +117,12 @@ public class Movie_Info{
 		try {
 			if(movie_name != null){
 				movie_name = movie_name.replaceAll("'","''");
-				movie_name = RegexUtil.formatMovieName(movie_name);
 			}
 			if(haibao_path != null){
 				haibao_path = haibao_path.replaceAll("'","''");
 			}
 			for(int i = 0 ; i < names.size(); i ++){
-				names.set(i, RegexUtil.formatMovieName(names.get(i).replaceAll("'","''")));
+				names.set(i, names.get(i).replaceAll("'","''"));
 			}
 			for(int i = 0 ; i < downloadlinks.size(); i ++){
 				downloadlinks.set(i, downloadlinks.get(i).replaceAll("'","''"));
