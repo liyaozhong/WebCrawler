@@ -211,13 +211,13 @@ public class ImageWriter {
 			conn.setReadTimeout(6 * 1000);
 			if (conn.getResponseCode() == 200) { 
 				inputStream = conn.getInputStream(); 
-				tmp_image_size = conn.getContentLength();
-			    outstream = new ByteArrayOutputStream((int)tmp_image_size); 
+			    outstream = new ByteArrayOutputStream(1024 * 10); 
 			    byte[] buffer = new byte[1024 * 10];
 			    int len = -1; 
 			    while ((len = inputStream.read(buffer)) != -1) { 
 			        outstream.write(buffer, 0, len); 
 			    }  
+			    tmp_image_size = outstream.size();
 			    tmp_image_path = ConstantUtil.IMAGE_ROOT_DIR + movie_src + "/" + BasicUtil.getMD5(movie_info.getMovieName().getBytes()) + ".jpg";
 			    File file = new File(tmp_image_path);
 				if(file.exists() && file.length() > tmp_image_size){
