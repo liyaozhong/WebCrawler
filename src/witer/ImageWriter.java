@@ -207,6 +207,7 @@ public class ImageWriter {
 				movie_info.setHaiBaoSize(size);
 			    fileoutStream = new FileOutputStream(file);
 			    fileoutStream.write(outstream.toByteArray()); 
+			    return WRITE_OK;
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -249,6 +250,6 @@ public class ImageWriter {
 				e.printStackTrace();
 			}
 		}
-		return WRITE_OK;
+		return WRITE_FAILED;
 	}
 }
