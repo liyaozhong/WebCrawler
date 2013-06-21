@@ -79,9 +79,9 @@ public class M1905Crawler extends BaseCrawler{
 					if(src.endsWith(NO_PIC)){
 						movie.setHaiBaoPath(null);
 					}
-//					else{
-//						ImageWriter.getInstance().addMovieList(movie);
-//					}
+					else{
+						ImageWriter.getInstance().addMovieList(movie);
+					}
 					
 					//获取影片译名
 					try {

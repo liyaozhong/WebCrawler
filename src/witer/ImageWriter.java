@@ -40,22 +40,6 @@ public class ImageWriter {
 		MAX_IMAGE_NUM = num;
 	}
 	
-	public void addMovieList(ArrayList<Movie_Info> info){
-		synchronized(ImageWriter.movie_list){
-			while(ImageWriter.movie_list.size() > MAX_IMAGE_NUM){
-				try {
-					ImageWriter.movie_list.wait();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			ImageWriter.movie_list.addAll(info);
-			if(ImageWriter.movie_list.size() > MAX_IMAGE_NUM){
-				movie_list.notifyAll();
-			}
-		}
-	}
 	public void addMovieList(Movie_Info info){
 		synchronized(ImageWriter.movie_list){
 			while(ImageWriter.movie_list.size() > MAX_IMAGE_NUM){
@@ -68,7 +52,7 @@ public class ImageWriter {
 			}
 			ImageWriter.movie_list.add(info);
 			if(ImageWriter.movie_list.size() > MAX_IMAGE_NUM){
-				movie_list.notify();
+				movie_list.notifyAll();
 			}
 		}
 	}

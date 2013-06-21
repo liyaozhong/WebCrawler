@@ -23,23 +23,6 @@ public class DBWriter {
 		}
 	}
 
-	private static ArrayList<String> createMovie_NameSearchSQL(ArrayList<Movie_Info> movie_list){
-		ArrayList<String> sql = new ArrayList<String>();
-		for(int i = 0; i < movie_list.size(); i ++){
-			StringBuffer sqlsb = new StringBuffer("select MOVIE_NAME from movienames where MOVIE_OTHER_NAME in (");
-			Movie_Info info = movie_list.get(i);
-			ArrayList<String> names = info.getNames();
-			for(int j = 0; j < names.size(); j ++){
-				if(j!=0){
-					sqlsb.append(",");
-				}
-				sqlsb.append("'" + names.get(j) + "'");
-			}
-			sqlsb.append(")");
-			sql.add(sqlsb.toString());
-		}
-		return sql;
-	}
 	private static ArrayList<String> creatMovie_NameSQL(ArrayList<Movie_Info> movie_list){
 		ArrayList<String> sql = new ArrayList<String>();
 		for(int i = 0; i < movie_list.size(); i ++){
@@ -133,7 +116,6 @@ public class DBWriter {
 					write(tmp);
 					LogUtil.getInstance().write("end DBWriter");
 					System.out.println("------------------------------------------------end DBWriter------------------------------------------------");
-					ImageWriter.getInstance().addMovieList(tmp);
 				}
 			}
 		};
@@ -159,21 +141,7 @@ public class DBWriter {
 				convertForMySQL(movie_list);
 				stmt = conn.createStatement();
 				
-				ArrayList<String> sql = createMovie_NameSearchSQL(movie_list);
-				for(int i = 0; i < sql.size(); i ++){
-					try {
-						ResultSet result = stmt.executeQuery(sql.get(i));
-						if(result.next()){
-							String movie_name = result.getString(1);
-							movie_list.set(i, movie_list.get(i).changeMovieName(movie_name));
-						}
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				
-				sql = creatMovie_NameSQL(movie_list);
+				ArrayList<String> sql = creatMovie_NameSQL(movie_list);
 				for(int i = 0; i < sql.size(); i ++){
 					try {
 						stmt.execute(sql.get(i));
