@@ -54,7 +54,6 @@ public abstract class BaseCrawler {
 			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++get max page failed! halting++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 			return;
 		}
-		DBWriter.getInstance().setDBName(movie_src);
 		DBWriter.getInstance().start();
 		ImageWriter.getInstance().setMovieSrc(movie_src);
 		ImageWriter.getInstance().start();

@@ -11,8 +11,8 @@ import model.Movie_Info;
 public class DBWriter {
 	private static final String driver = "com.mysql.jdbc.Driver";
 	private static final String url = "jdbc:mysql://127.0.0.1:3306/";
-	private static String db_name = null;
 	private static final String DB_CRAWLED_URLS = "crawled_urls";
+	private static final String DB_NAME = "MOVIECRAWLER";
 	private static final String root = "root";
 	private static final String password = "liyaozhong";
 	
@@ -22,16 +22,21 @@ public class DBWriter {
 			movie_list.set(i, info.convertForMySQL());
 		}
 	}
-	private static ArrayList<String> creatMovie_InfoSQL(ArrayList<Movie_Info> movie_list){
+
+	private static ArrayList<String> createMovie_NameSearchSQL(ArrayList<Movie_Info> movie_list){
 		ArrayList<String> sql = new ArrayList<String>();
 		for(int i = 0; i < movie_list.size(); i ++){
+			StringBuffer sqlsb = new StringBuffer("select MOVIE_NAME from movienames where MOVIE_OTHER_NAME in (");
 			Movie_Info info = movie_list.get(i);
-			String name = info.getMovieName();
-			String path = info.getHaiBaoPath();
-			if(name != null && path != null){
-				path = "image/" + db_name + "/" + BasicUtil.getMD5(name.getBytes()) + ".jpg";
-				sql.add("replace into movieinfo set MOVIE_NAME='"+name+"', HAIBAO_PATH='"+path+"'");
+			ArrayList<String> names = info.getNames();
+			for(int j = 0; j < names.size(); j ++){
+				if(j!=0){
+					sqlsb.append(",");
+				}
+				sqlsb.append("'" + names.get(j) + "'");
 			}
+			sqlsb.append(")");
+			sql.add(sqlsb.toString());
 		}
 		return sql;
 	}
@@ -59,11 +64,6 @@ public class DBWriter {
 		}
 		return sql;
 	}
-	
-	public void setDBName(String name){
-		db_name = name;
-	}
-	
 	
 	private static DBWriter wdb;
 	private Runnable task;
@@ -107,6 +107,7 @@ public class DBWriter {
 			@Override
 			public void run() {
 				while(true){
+					ArrayList<Movie_Info> tmp = new ArrayList<Movie_Info>();
 					synchronized (movie_list) {
 						if(movie_list.size() == 0 && halt){
 							LogUtil.getInstance().write("DBWriter halting");
@@ -122,15 +123,17 @@ public class DBWriter {
 							}
 						}
 						if(movie_list.size() != 0){
-							LogUtil.getInstance().write("begin DBWriter");
-							System.out.println("------------------------------------------------begin DBWriter------------------------------------------------");
-							write(movie_list);
-							LogUtil.getInstance().write("end DBWriter");
-							System.out.println("------------------------------------------------end DBWriter------------------------------------------------");
+							tmp = (ArrayList<Movie_Info>) movie_list.clone();
 							movie_list.clear();
 							movie_list.notify();
 						}
 					}
+					LogUtil.getInstance().write("begin DBWriter");
+					System.out.println("------------------------------------------------begin DBWriter------------------------------------------------");
+					write(tmp);
+					LogUtil.getInstance().write("end DBWriter");
+					System.out.println("------------------------------------------------end DBWriter------------------------------------------------");
+					ImageWriter.getInstance().addMovieList(tmp);
 				}
 			}
 		};
@@ -148,17 +151,22 @@ public class DBWriter {
 			e.printStackTrace();
 		}
 		try {
-			conn = DriverManager.getConnection(url + db_name, root, password);
+			conn = DriverManager.getConnection(url + DB_NAME, root, password);
 			if(!conn.isClosed()){
 				conn.setAutoCommit(false);
 			}
 			if(!conn.isClosed()){
 				convertForMySQL(movie_list);
 				stmt = conn.createStatement();
-				ArrayList<String> sql = creatMovie_InfoSQL(movie_list);
+				
+				ArrayList<String> sql = createMovie_NameSearchSQL(movie_list);
 				for(int i = 0; i < sql.size(); i ++){
 					try {
-						stmt.execute(sql.get(i));
+						ResultSet result = stmt.executeQuery(sql.get(i));
+						if(result.next()){
+							String movie_name = result.getString(1);
+							movie_list.set(i, movie_list.get(i).changeMovieName(movie_name));
+						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -202,6 +210,43 @@ public class DBWriter {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	public synchronized void writeMovieInfo(Movie_Info info){
+		String name = info.getMovieName();
+		String path = info.getHaiBaoPath();
+		if(name != null && path != null){
+
+			Statement stmt = null;
+			Connection conn = null;
+			try {
+				Class.forName(driver);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				conn = DriverManager.getConnection(url + DB_NAME, root, password);
+				stmt = conn.createStatement();
+				String sql = "replace into movieinfo set MOVIE_NAME='"+name+"', HAIBAO_PATH='"+path+"', HAIBAO_SIZE='" +info.getHaiBaoSize()+"'";
+				stmt.execute(sql);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally{
+				try {
+					if(stmt != null){
+						stmt.close();
+					}
+					if(conn != null){
+						conn.close();
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}

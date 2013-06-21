@@ -39,6 +39,23 @@ public class ImageWriter {
 	public void setMaxImageNum(int num){
 		MAX_IMAGE_NUM = num;
 	}
+	
+	public void addMovieList(ArrayList<Movie_Info> info){
+		synchronized(ImageWriter.movie_list){
+			while(ImageWriter.movie_list.size() > MAX_IMAGE_NUM){
+				try {
+					ImageWriter.movie_list.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			ImageWriter.movie_list.addAll(info);
+			if(ImageWriter.movie_list.size() > MAX_IMAGE_NUM){
+				movie_list.notifyAll();
+			}
+		}
+	}
 	public void addMovieList(Movie_Info info){
 		synchronized(ImageWriter.movie_list){
 			while(ImageWriter.movie_list.size() > MAX_IMAGE_NUM){
@@ -51,7 +68,7 @@ public class ImageWriter {
 			}
 			ImageWriter.movie_list.add(info);
 			if(ImageWriter.movie_list.size() > MAX_IMAGE_NUM){
-				movie_list.notifyAll();
+				movie_list.notify();
 			}
 		}
 	}
@@ -76,9 +93,9 @@ public class ImageWriter {
 							System.out.println("------------------------------------------------IamgeWriter halting------------------------------------------------");
 							break;
 						}
-						if(movie_list.size() == 0){
+						while(movie_list.size() == 0){
 							try {
-								System.err.println("IamgeWriter waitting...");
+//								System.err.println("IamgeWriter waitting...");
 								movie_list.wait();
 							} catch (InterruptedException e) {
 								// TODO Auto-generated catch block
@@ -88,17 +105,21 @@ public class ImageWriter {
 						if(movie_list.size() != 0){
 							tmp = (ArrayList<Movie_Info>) movie_list.clone();
 							movie_list.clear();
-							movie_list.notify();
+							movie_list.notifyAll();
 						}
 					}
 					//批量获取海报
 					for(int i = 0; i < tmp.size(); i ++){
-						int rep_code = write(tmp.get(i));
+						Movie_Info info = tmp.get(i);
+						int rep_code = write(info);
 						int retry = GET_IMAGE_FAILED;
 						do{
 							switch (rep_code){
 							case WRITE_OK:
 								retry = GET_IMAGE_DONE;
+								info.setHaiBaoPath(tmp_image_path);
+								info.setHaiBaoSize(tmp_image_size);
+								DBWriter.getInstance().writeMovieInfo(info);
 								break;
 							case TIME_OUT:
 								//超时则重新获取一次
@@ -140,8 +161,16 @@ public class ImageWriter {
 			}
 			
 		};
-		Thread thread = new Thread(task);
-		thread.start();
+		Thread thread1 = new Thread(task);
+		Thread thread2 = new Thread(task);
+		Thread thread3 = new Thread(task);
+		Thread thread4 = new Thread(task);
+		Thread thread5 = new Thread(task);
+		thread1.start();
+		thread2.start();
+		thread3.start();
+		thread4.start();
+		thread5.start();
 	}
 	
 	private static String movie_src = "default";
@@ -152,6 +181,9 @@ public class ImageWriter {
 	public void setMovieSrc(String src){
 		movie_src = src;
 	}
+	
+	private String tmp_image_path = null;
+	private long tmp_image_size = 0;
 	
 	private final static int UNKOWN_ERROR = -1;
 	private final static int WRITE_OK = 0;
@@ -170,6 +202,7 @@ public class ImageWriter {
 		InputStream inputStream = null;
 		ByteArrayOutputStream outstream = null;
 		FileOutputStream fileoutStream = null;
+		tmp_image_size = 0;
 		try {
 			url = new URL(movie_info.getHaiBaoPath());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
@@ -178,15 +211,16 @@ public class ImageWriter {
 			conn.setReadTimeout(6 * 1000);
 			if (conn.getResponseCode() == 200) { 
 				inputStream = conn.getInputStream(); 
-			    outstream = new ByteArrayOutputStream(); 
-			    byte[] buffer = new byte[1024 * 50];
+				tmp_image_size = conn.getContentLength();
+			    outstream = new ByteArrayOutputStream((int)tmp_image_size); 
+			    byte[] buffer = new byte[1024 * 10];
 			    int len = -1; 
 			    while ((len = inputStream.read(buffer)) != -1) { 
 			        outstream.write(buffer, 0, len); 
-			    } 
-				 
-			    File file = new File(ConstantUtil.IMAGE_ROOT_DIR + movie_src + "/" + BasicUtil.getMD5(movie_info.getMovieName().getBytes()) + ".jpg");
-				if(file.exists()){
+			    }  
+			    tmp_image_path = ConstantUtil.IMAGE_ROOT_DIR + movie_src + "/" + BasicUtil.getMD5(movie_info.getMovieName().getBytes()) + ".jpg";
+			    File file = new File(tmp_image_path);
+				if(file.exists() && file.length() > tmp_image_size){
 					return FILE_EXIST;
 				}
 			    fileoutStream = new FileOutputStream(file);

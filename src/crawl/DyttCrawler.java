@@ -169,9 +169,9 @@ public class DyttCrawler extends BaseCrawler{
 				parsePattern(movie_info, content, i);
 			}
 			movie_counter ++;
-			if(movie_info.getMovieName() != null){
-				ImageWriter.getInstance().addMovieList(movie_info.clone());
-			}
+//			if(movie_info.getMovieName() != null){
+//				ImageWriter.getInstance().addMovieList(movie_info.clone());
+//			}
 			movie_list.add(movie_info);
 		}
 		DBWriter.getInstance().addMovieList(movie_list);

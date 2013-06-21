@@ -10,11 +10,13 @@ public class Movie_Info{
 	private ArrayList<String> names = new ArrayList<String>();
 	private ArrayList<String> downloadlinks = new ArrayList<String>();
 	private ArrayList<String> downloadnames = new ArrayList<String>();
+	private long haibao_size = 0;
 	
 	public Movie_Info(){}
 	public Movie_Info(String name, String path){
 		this.movie_name = name;
 		this.haibao_path = path;
+		this.names.add(name);
 	}
 	private Movie_Info(Movie_Info info){
 		this.movie_name = info.movie_name;
@@ -22,6 +24,7 @@ public class Movie_Info{
 		this.names = info.names;
 		this.downloadlinks = info.downloadlinks;
 		this.downloadnames = info.downloadnames;
+		this.haibao_size = info.haibao_size;
 	}
 	public boolean hasName(){
 		return this.movie_name != null;
@@ -31,12 +34,16 @@ public class Movie_Info{
 	}
 	public void setMovieName(String movie_name){
 		this.movie_name = movie_name;
+		this.names.add(movie_name);
 	}
 	public void setHaiBaoPath(String haibao_path){
 		this.haibao_path = haibao_path;
 	}
 	public void setNames(ArrayList<String> names){
 		this.names = names;
+	}
+	public void setHaiBaoSize(long size){
+		this.haibao_size = size;
 	}
 //	public void setDownLoadLinks(ArrayList<String> downloadlinks){
 //		this.downloadlinks = downloadlinks;
@@ -63,6 +70,9 @@ public class Movie_Info{
 	public String getHaiBaoPath(){
 		return this.haibao_path;
 	}
+	public long getHaiBaoSize(){
+		return this.haibao_size;
+	}
 	public ArrayList<String> getNames(){
 		return this.names;
 	}
@@ -73,9 +83,14 @@ public class Movie_Info{
 		return this.downloadnames;
 	}
 	
+	public Movie_Info changeMovieName(String movie_name){
+		this.movie_name = movie_name;
+		return this;
+	}
+	
 	@Override
 	public String toString(){
-		StringBuffer sb = new StringBuffer("movie name: " + movie_name + "\nhaibao path: " + haibao_path + "\n");
+		StringBuffer sb = new StringBuffer("movie name: " + movie_name + "\nhaibao path: " + haibao_path + "\nhaibai size : " + haibao_size);
 		if(names.size() != 0){
 			sb.append("movie has names: ");
 			for(int i = 0; i < names.size(); i ++){

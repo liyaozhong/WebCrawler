@@ -175,9 +175,9 @@ public class YyetsCrawler extends BaseCrawler{
 						}
 					}
 				}
-				if(info.getMovieName() != null){
-					ImageWriter.getInstance().addMovieList(info);
-				}
+//				if(info.getMovieName() != null){
+//					ImageWriter.getInstance().addMovieList(info);
+//				}
 				if(doc.getElementById("tabs") == null){
 					continue;
 				}

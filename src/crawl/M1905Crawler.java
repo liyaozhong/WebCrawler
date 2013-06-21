@@ -76,9 +76,12 @@ public class M1905Crawler extends BaseCrawler{
 							src.substring(src.lastIndexOf("_") + 1, src.length());
 					Movie_Info movie = new Movie_Info(alt, src);
 					//含有nopic.gif表示当前电影没有海报
-					if(!src.endsWith(NO_PIC)){
-						ImageWriter.getInstance().addMovieList(movie);
+					if(src.endsWith(NO_PIC)){
+						movie.setHaiBaoPath(null);
 					}
+//					else{
+//						ImageWriter.getInstance().addMovieList(movie);
+//					}
 					
 					//获取影片译名
 					try {
